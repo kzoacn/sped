@@ -596,6 +596,10 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   bf128_t* qk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
   if (Lke > 0) {
     aes_key_schedule_constraints_128(w, bf_v, 0, NULL, NULL, A0, A1, k, vk, NULL, qk, params);
+    for(int i=0;i<Ske;i++){
+      A0[i] = bf128_zero();
+      A1[i] = bf128_zero();
+    }
   }
 
   // Step: Skipping 8 in implementation
@@ -664,8 +668,10 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   bf128_t* qk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
   bf128_t* B_0                = malloc(sizeof(bf128_t) * length_b);
   if (Lke > 0) {
-    aes_key_schedule_constraints_128(NULL, NULL, 1, bf_q, delta, NULL, NULL, k, vk, B_0, qk,
-                                     params);
+    aes_key_schedule_constraints_128(NULL, NULL, 1, bf_q, delta, NULL, NULL, k, vk, B_0, qk,params);
+    for(int i=0;i<Ske;i++){
+      B_0[i]=bf128_zero();
+    }
   }
 
   // Step: 14
