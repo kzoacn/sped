@@ -313,7 +313,7 @@ void faest_sign(uint8_t* sig, const uint8_t* msg, size_t msglen, const uint8_t* 
     H1_final(&h1_ctx_1, h_v, lambdaBytes * 2);
   }
   // Step: 9, 10
-  uint8_t* w = aes_extend_witness(owf_key, owf_input, params);
+  uint8_t* w = aes_extend_witness(owf_key, owf_input, params);//TODO
   // Step: 11
   xor_u8_array(w, u, signature_d(sig, params), ell_bytes);
 
@@ -328,7 +328,7 @@ void faest_sign(uint8_t* sig, const uint8_t* msg, size_t msglen, const uint8_t* 
   // Step: 16
   uint8_t b_tilde[MAX_LAMBDA_BYTES];
   aes_prove(w, u, V, owf_input, owf_output, chall_2, signature_a_tilde(sig, params), b_tilde,
-            params);
+            params);//TODO
   free(V[0]);
   free(V);
   V = NULL;
@@ -474,7 +474,7 @@ int faest_verify(const uint8_t* msg, size_t msglen, const uint8_t* sig, const ui
   // Step 18
   uint8_t* b_tilde =
       aes_verify(dsignature_d(sig, params), q, chall_2, dsignature_chall_3(sig, params),
-                 dsignature_a_tilde(sig, params), owf_input, owf_output, params);
+                 dsignature_a_tilde(sig, params), owf_input, owf_output, params); //TODO
   free(q[0]);
   free(q);
   q = NULL;

@@ -419,14 +419,7 @@ uint8_t* aes_extend_witness(const uint8_t* key, const uint8_t* in, const faest_p
   //   break;
   // default:
   //   break;
-  // }
-
-  if (!L_ke) {
-    // switch input and key for EM
-    const uint8_t* tmp = key;
-    key                = in;
-    in                 = tmp;
-  }
+  // } 
 
   // Step 3
   aes_round_keys_t round_keys;
