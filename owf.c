@@ -20,8 +20,10 @@ bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output) {
   const int w = paramset.faest_param.w;
   const int d = paramset.faest_param.d;
   const int lambda = paramset.faest_param.lambda;
-
+  const int output_len = (k+7)/8;
   int ret = 0; 
+
+  memset(output, 0, output_len);
 
   for(int i = 0; i < 16; i++) {
     output[i]=input[i]^key[i];

@@ -194,11 +194,11 @@ ATTR_PURE static inline const uint8_t* dsignature_iv(const uint8_t* base_ptr,
 }
 
 static void hash_mu(uint8_t* mu, const uint8_t* owf_input, const uint8_t* owf_output,
-                    size_t owf_size, const uint8_t* msg, size_t msglen, unsigned int lambda) {
+                    size_t sk_size, size_t pk_size, const uint8_t* msg, size_t msglen, unsigned int lambda) {
   H1_context_t h1_ctx;
   H1_init(&h1_ctx, lambda);
-  H1_update(&h1_ctx, owf_input, owf_size);
-  H1_update(&h1_ctx, owf_output, owf_size);
+  H1_update(&h1_ctx, owf_input, sk_size/2);
+  H1_update(&h1_ctx, owf_output, pk_size - sk_size/2);
   H1_update(&h1_ctx, msg, msglen);
   H1_final(&h1_ctx, mu, 2 * lambda / 8);
 }
@@ -260,7 +260,7 @@ void faest_sign(uint8_t* sig, const uint8_t* msg, size_t msglen, const uint8_t* 
 
   // Step: 2
   uint8_t mu[MAX_LAMBDA_BYTES * 2];
-  hash_mu(mu, owf_input, owf_output, params->faest_param.pkSize / 2, msg, msglen, lambda);
+  hash_mu(mu, owf_input, owf_output, params->faest_param.lambda/8*2, params->faest_param.pkSize, msg, msglen, lambda);
 
   // Step: 3
   uint8_t rootkey[MAX_LAMBDA_BYTES];
@@ -372,7 +372,7 @@ int faest_verify(const uint8_t* msg, size_t msglen, const uint8_t* sig, const ui
 
   // Step: 3
   uint8_t mu[MAX_LAMBDA_BYTES * 2];
-  hash_mu(mu, owf_input, owf_output, params->faest_param.pkSize / 2, msg, msglen, lambda);
+  hash_mu(mu, owf_input, owf_output, params->faest_param.lambda/8*2, params->faest_param.pkSize, msg, msglen, lambda);
 
   // Step: 5
   // q prime is a \hat \ell \times \lambda matrix
