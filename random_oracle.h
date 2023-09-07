@@ -7,6 +7,7 @@
 
 #include "hash_shake.h"
 #include "macros.h"
+#include "stdlib.h"
 
 FAEST_BEGIN_C_DECL
 
@@ -61,6 +62,7 @@ void H_mat_init(H_mat_context_t* ctx, unsigned int security_param);
 void H_mat_update(H_mat_context_t* ctx, const uint8_t* src, size_t len);
 void H_mat_final(H_mat_context_t* ctx, uint8_t* digest, size_t len);
 
+void generate_H_mat(uint8_t *buffer, int k,int m,const uint8_t* seed,int lambda);
 
 // implementation for H_e
 
@@ -70,6 +72,7 @@ void H_e_init(H_e_context_t* ctx, unsigned int security_param);
 void H_e_update(H_e_context_t* ctx, const uint8_t* src, size_t len);
 void H_e_final(H_e_context_t* ctx, uint8_t* digest, size_t len);
 
+void generate_e(uint8_t *buffer,int m,int w,int d,const uint8_t* seed,int lambda);
 
 FAEST_END_C_DECL
 

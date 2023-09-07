@@ -3,6 +3,9 @@
     "files.associations": {
         "instances.h": "c",
         "parameters.h": "c",
-        "fields.h": "c"
+        "fields.h": "c",
+        "random_oracle.h": "c",
+        "utils.h": "c",
+        "config.h": "c"
     }
 }

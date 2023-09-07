@@ -119,6 +119,13 @@ void H_mat_final(H_mat_context_t* ctx, uint8_t* digest, size_t len) {
   hash_squeeze(ctx, digest, len);
   hash_clear(ctx);
 }
+void generate_H_mat(uint8_t *buffer, int k,int m,const uint8_t* seed,int lambda){
+  H_mat_context_t ctx;
+  H_mat_init(&ctx, lambda);
+  H_mat_update(&ctx, seed, lambda/8);
+  H_mat_final(&ctx, buffer, k*m);
+}
+
 
 // H_e
 void H_e_init(H_e_context_t* ctx, unsigned int security_param) {
@@ -134,4 +141,18 @@ void H_e_final(H_e_context_t* ctx, uint8_t* digest, size_t len) {
   hash_final(ctx);
   hash_squeeze(ctx, digest, len);
   hash_clear(ctx);
+}
+
+void generate_e(uint8_t *buffer,int m,int w,int d,const uint8_t* seed,int lambda){
+  H_e_context_t ctx;
+  H_e_init(&ctx, lambda);
+  H_e_update(&ctx, seed, lambda/8);
+  uint64_t *tmp = malloc(sizeof(uint64_t)*w);
+  H_e_final(&ctx, (uint8_t*)tmp, sizeof(uint64_t)*w);
+  memset(buffer,0,m);
+  for(int i=0;i<m;i+=d){
+    int offset = tmp[i/d]%d;
+    buffer[i+offset] = 1;
+  }
+  free(tmp);
 }
