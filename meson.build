@@ -97,6 +97,10 @@ param_128s.set('T1', 4)
 param_128s.set('SIG_SIZE', 5006)
 param_128s.set('PK_SIZE', 32)
 param_128s.set('SK_SIZE', 32)
+param_128s.set('M', 1296)
+param_128s.set('K', 737)
+param_128s.set('W', 216)
+param_128s.set('D', 6)
 parameter_sets += param_128s
 
 # also make data from all parameter sets available "globally"

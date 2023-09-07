@@ -399,92 +399,21 @@ uint8_t* aes_extend_witness(const uint8_t* key, const uint8_t* in, const faest_p
 
   uint8_t* w           = malloc((l + 7) / 8);
   uint8_t* const w_out = w;
-
-  unsigned int block_words = AES_BLOCK_WORDS;
-  unsigned int beta        = 1;
-  // switch (params->faest_paramid) {
-  // case FAEST_192F:
-  // case FAEST_192S:
-  // case FAEST_256F:
-  // case FAEST_256S:
-  //   beta = 2;
-  //   break;
-  // case FAEST_EM_192F:
-  // case FAEST_EM_192S:
-  //   block_words = RIJNDAEL_BLOCK_WORDS_192;
-  //   break;
-  // case FAEST_EM_256F:
-  // case FAEST_EM_256S:
-  //   block_words = RIJNDAEL_BLOCK_WORDS_256;
-  //   break;
-  // default:
-  //   break;
-  // } 
-
-  // Step 3
-  aes_round_keys_t round_keys;
-  switch (lambda) {
-  case 256:
-    if (block_words == RIJNDAEL_BLOCK_WORDS_256) {
-      rijndael256_init_round_keys(&round_keys, key);
-    } else {
-      aes256_init_round_keys(&round_keys, key);
-    }
-    break;
-  case 192:
-    if (block_words == RIJNDAEL_BLOCK_WORDS_192) {
-      rijndael192_init_round_keys(&round_keys, key);
-    } else {
-      aes192_init_round_keys(&round_keys, key);
-    }
-    break;
-  default:
-    aes128_init_round_keys(&round_keys, key);
-    break;
+  // w = 0
+  memset(w, 0, (l + 7) / 8);
+  
+  for(int i=0;i<lambda/8;i++){
+    w[i]=key[i];
   }
 
-  // Step 4
-  if (L_ke > 0) {
-    // Key schedule constraints only needed for normal AES, not EM variant.
-    for (unsigned int i = 0; i != params->faest_param.Nwd; ++i) {
-      memcpy(w, round_keys.round_keys[i / 4][i % 4], sizeof(aes_word_t));
-      w += sizeof(aes_word_t);
-    }
-
-    for (unsigned int j = 0, ik = params->faest_param.Nwd; j < S_ke / 4; ++j) {
-      memcpy(w, round_keys.round_keys[ik / 4][ik % 4], sizeof(aes_word_t));
-      w += sizeof(aes_word_t);
-      ik += lambda == 192 ? 6 : 4;
-    }
-  } else {
-    // saving the OWF key to the extended witness
-    memcpy(w, in, lambda / 8);
-    w += lambda / 8;
-  }
-
-  // Step 10
-  for (unsigned b = 0; b < beta; ++b, in += sizeof(aes_word_t) * block_words) {
-    // Step 12
-    aes_block_t state;
-    load_state(state, in, block_words);
-
-    // Step 13
-    add_round_key(0, state, &round_keys, block_words);
-
-    for (unsigned int round = 1; round < num_rounds; ++round) {
-      // Step 15
-      sub_bytes(state, block_words);
-      // Step 16
-      shift_row(state, block_words);
-      // Step 17
-      store_state(w, state, block_words);
-      w += sizeof(aes_word_t) * block_words;
-      // Step 18
-      mix_column(state, block_words);
-      // Step 19
-      add_round_key(round, state, &round_keys, block_words);
-    }
-    // last round is not commited to, so not computed
+  uint8_t* new_w = w+lambda/8;
+  for(int i=0;i+1<128;i++){
+    // i th bit of key
+    int bit_a = (key[i/8] >> (i%8)) & 1;
+    int bit_b = (key[(i+1)/8] >> ((i+1)%8)) & 1;
+    int bit_c = bit_a & bit_b;
+    //set i-th bit of output to bit_c
+    new_w[i/8] ^= (bit_c << (i%8));
   }
 
   return w_out;

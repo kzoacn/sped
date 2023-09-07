@@ -19,11 +19,11 @@
 
 // memory layout of the public key: OWF input || OWF output
 #define PK_INPUT(pk) (pk)
-#define PK_OUTPUT(pk) (&pk[@PK_SIZE@ / 2])
+#define PK_OUTPUT(pk) (&pk[@SK_SIZE@ / 2])
 
 // memory layout of the secret key: OWF input || OWF key
 #define SK_INPUT(sk) (sk)
-#define SK_KEY(sk) (&sk[@PK_SIZE@ / 2])
+#define SK_KEY(sk) (&sk[@SK_SIZE@ / 2])
 
 int FAEST_CALLING_CONVENTION faest_@PARAM_L@_keygen(uint8_t* pk, uint8_t* sk) {
   if (!pk || !sk) {
@@ -34,11 +34,11 @@ int FAEST_CALLING_CONVENTION faest_@PARAM_L@_keygen(uint8_t* pk, uint8_t* sk) {
   while (!done) {
     rand_bytes(sk, @SK_SIZE@);
     // declassify OWF input
-    faest_declassify(SK_INPUT(sk), @PK_SIZE@ / 2);
+    faest_declassify(SK_INPUT(sk), @SK_SIZE@ / 2);
     done = faest_@PARAM_L@_owf(SK_KEY(sk), SK_INPUT(sk), PK_OUTPUT(pk));
     faest_declassify(&done, sizeof(done));
   }
-  memcpy(PK_INPUT(pk), SK_INPUT(sk), @PK_SIZE@ / 2);
+  memcpy(PK_INPUT(pk), SK_INPUT(sk), @SK_SIZE@ / 2);
 
   // declassify public key
   faest_declassify(pk, @PK_SIZE@);
@@ -55,7 +55,7 @@ int FAEST_CALLING_CONVENTION faest_@PARAM_L@_validate_keypair(const uint8_t* pk,
     // zero bytes in SubBytes input
     return 1;
   }
-  memcpy(PK_INPUT(pk_check), SK_INPUT(sk), @PK_SIZE@ / 2);
+  memcpy(PK_INPUT(pk_check), SK_INPUT(sk), @SK_SIZE@ / 2);
 
   return faest_timingsafe_bcmp(pk_check, pk, sizeof(pk_check)) == 0 ? 0 : 2;
 }
@@ -65,7 +65,7 @@ int FAEST_CALLING_CONVENTION faest_@PARAM_L@_sign_with_randomness(const uint8_t*
     return -1;
   }
 
-  uint8_t owf_output[@PK_SIZE@ / 2];
+  uint8_t owf_output[@PK_SIZE@ - @SK_SIZE@ / 2];
   if (!faest_@PARAM_L@_owf(SK_KEY(sk), SK_INPUT(sk), owf_output)) {
     // invalid key
     return -1;

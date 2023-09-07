@@ -13,6 +13,9 @@ static const uint8_t domain_sep_H1 = 1;
 static const uint8_t domain_sep_H2 = 2;
 static const uint8_t domain_sep_H3 = 3;
 
+static const uint8_t domain_sep_H_mat = 4;
+static const uint8_t domain_sep_H_e = 5;
+
 // H_0
 void H0_init(H0_context_t* ctx, unsigned int security_param) {
   hash_init(ctx, security_param == 128 ? 128 : 256);
@@ -96,5 +99,39 @@ void H3_final(H3_context_t* ctx, uint8_t* digest, size_t len, uint8_t* iv) {
   hash_final(ctx);
   hash_squeeze(ctx, digest, len);
   hash_squeeze(ctx, iv, 16);
+  hash_clear(ctx);
+}
+
+
+
+// H_mat
+void H_mat_init(H_mat_context_t* ctx, unsigned int security_param) {
+  hash_init(ctx, security_param == 128 ? 128 : 256);
+}
+
+void H_mat_update(H_mat_context_t* ctx, const uint8_t* src, size_t len) {
+  hash_update(ctx, src, len);
+}
+
+void H_mat_final(H_mat_context_t* ctx, uint8_t* digest, size_t len) {
+  hash_update(ctx, &domain_sep_H_mat, sizeof(domain_sep_H_mat));
+  hash_final(ctx);
+  hash_squeeze(ctx, digest, len);
+  hash_clear(ctx);
+}
+
+// H_e
+void H_e_init(H_e_context_t* ctx, unsigned int security_param) {
+  hash_init(ctx, security_param == 128 ? 128 : 256);
+}
+
+void H_e_update(H_e_context_t* ctx, const uint8_t* src, size_t len) {
+  hash_update(ctx, src, len);
+}
+
+void H_e_final(H_e_context_t* ctx, uint8_t* digest, size_t len) {
+  hash_update(ctx, &domain_sep_H_e, sizeof(domain_sep_H_e));
+  hash_final(ctx);
+  hash_squeeze(ctx, digest, len);
   hash_clear(ctx);
 }

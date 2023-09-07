@@ -594,21 +594,40 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   uint8_t* k                  = malloc((R + 1) * 128 / 8);
   bf128_t* vk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
   bf128_t* qk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
-  if (Lke > 0) {
-    aes_key_schedule_constraints_128(w, bf_v, 0, NULL, NULL, A0, A1, k, vk, NULL, qk, params);
-    for(int i=0;i<Ske;i++){
-      A0[i] = bf128_zero();
-      A1[i] = bf128_zero();
-    }
-  }
+  //if (Lke > 0) {
+  //  aes_key_schedule_constraints_128(w, bf_v, 0, NULL, NULL, A0, A1, k, vk, NULL, qk, params);
+  //}
 
   // Step: Skipping 8 in implementation
   // Step: 9
 
   // Step: 10,11
-  aes_enc_constraints_128(in, out, w + Lke / 8, bf_v + Lke, k, vk, 0, NULL, NULL, NULL, A0 + Ske,
-                          A1 + Ske, NULL, params);
+  //aes_enc_constraints_128(in, out, w + Lke / 8, bf_v + Lke, k, vk, 0, NULL, NULL, NULL, A0 + Ske, A1 + Ske, NULL, params);
   // Step: 12 (beta == 1)
+
+
+  for(int i=0;i<length_a;i++){
+    A0[i] = bf128_zero();
+    A1[i] = bf128_zero();
+  }
+
+
+  for(int i=0;i+1<128;i++){
+    // i th bit of key
+    int bit_a = (w[i/8] >> (i%8)) & 1;
+    int bit_b = (w[(i+1)/8] >> ((i+1)%8)) & 1;
+    int bit_c = bit_a & bit_b;
+
+    A0[i]=bf128_mul(bf_v[i],bf_v[i+1]);
+    A1[i]=bf128_add(bf128_add(bf128_mul(bf_v[i],bf128_from_bit(bit_b)),bf128_mul(bf_v[i+1],bf128_from_bit(bit_a)))
+                    ,bf_v[128+i]);
+  }
+        //A0[j] = bf128_mul(vs[j], vs_dash[j]);
+      //A1[j] = bf128_add(
+          //bf128_add(bf128_mul(bf128_add(s[j], vs[j]), bf128_add(s_dash[j], vs_dash[j])), A0[j]),
+          //bf128_one());
+
+
   free(qk);
   free(vk);
   free(k);
@@ -667,17 +686,23 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   bf128_t* vk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
   bf128_t* qk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
   bf128_t* B_0                = malloc(sizeof(bf128_t) * length_b);
-  if (Lke > 0) {
-    aes_key_schedule_constraints_128(NULL, NULL, 1, bf_q, delta, NULL, NULL, k, vk, B_0, qk,params);
-    for(int i=0;i<Ske;i++){
-      B_0[i]=bf128_zero();
-    }
-  }
+  //if (Lke > 0) {
+  //  aes_key_schedule_constraints_128(NULL, NULL, 1, bf_q, delta, NULL, NULL, k, vk, B_0, qk,params);
+  //}
 
   // Step: 14
   bf128_t* B_1 = B_0 + Ske;
-  aes_enc_constraints_128(in, out, NULL, NULL, NULL, NULL, 1, bf_q + Lke, qk, delta, NULL, NULL,
-                          B_1, params);
+  //aes_enc_constraints_128(in, out, NULL, NULL, NULL, NULL, 1, bf_q + Lke, qk, delta, NULL, NULL,B_1, params);
+
+
+  for(int i=0;i<length_b;i++){
+    B_0[i]=bf128_zero();
+  }
+
+
+  for(int i=0;i+1<128;i++){
+    B_0[i]=bf128_add(bf128_mul(bf_q[i],bf_q[i+1]),bf128_mul(bf_q[128+i],bf128_load(delta)));
+  }
   // Step: 18 (beta == 1)
   free(qk);
   free(vk);

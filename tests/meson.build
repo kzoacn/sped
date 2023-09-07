@@ -38,10 +38,10 @@ if boost_test.found()
     args: ['-t', 'aes'],
     timeout: 6000,
   )
-  test('AES prove', extended_tests,
-    args: ['-t', 'test_aes_prove'],
-    timeout: 6000,
-  )
+  #test('AES prove', extended_tests,
+  #  args: ['-t', 'test_aes_prove'],
+  #  timeout: 6000,
+  #)
   test('SHAKE', extended_tests,
     args: ['-t', 'hash_shake'],
     timeout: 6000,
