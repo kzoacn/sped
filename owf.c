@@ -62,6 +62,19 @@ bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output) {
   generate_e(e,m,w,d,key,lambda);
 
 
+  // y=H*e
+  uint8_t *y = (uint8_t *)malloc(k);
+  memset(y,0,k);
+  for(int i=0;i<k;i++)
+  for(int j=0;j<m;j++){
+    y[i] ^= H[i][j] & e[j];
+  }
+  //pack y into output
+  for(int i=0;i<k;i++){
+    output[i/8] ^= (y[i] << (i%8));
+  }
+
+  free(y);
   free(H);
   free(buffer);
 
