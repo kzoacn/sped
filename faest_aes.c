@@ -166,8 +166,8 @@ static void aes_prove_internal(const uint8_t* w, const uint8_t* u, uint8_t** V, 
       uint32_t index=i*D+j;
       s=bf_add(s,bf_e[index]);
     }
-    A0[i+m/D]=s;
-    A1[i+m/D]=bf_one();
+    A0[i+m/D]=bf_zero();
+    A1[i+m/D]=s;
   }
 
   free(e);
@@ -325,7 +325,7 @@ static uint8_t* aes_verify_internal(const uint8_t* d, uint8_t** Q, const uint8_t
       uint32_t index=i*D+j;
       s=bf_add(s,bf_e[index]);
     }
-    B_0[i+m/D]=s;
+    B_0[i+m/D]=bf_add( bf_mul(s,bf_load(delta)),bf_mul(bf_load(delta),bf_load(delta)) );
   }
 
   

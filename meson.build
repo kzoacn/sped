@@ -78,6 +78,7 @@ parameter_sets = []
 # parameter set: FAEST-128s
 param_128s = configuration_data()
 param_128s.set('PARAM', '128S')
+param_128s.set('PARAM', '128S')
 param_128s.set('PARAM_L', '128s')
 param_128s.set('LAMBDA', 128)
 param_128s.set('Nwd', 4)
@@ -103,7 +104,7 @@ param_128f.set('PARAM', '128F')
 param_128f.set('PARAM_L', '128f')
 param_128f.set('LAMBDA', 128)
 param_128f.set('Nwd', 4)
-param_128f.set('L', 1600)
+param_128f.set('L', 696)
 param_128f.set('TAU', 16)
 param_128f.set('K0', 8)
 param_128f.set('K1', 8)
@@ -117,6 +118,23 @@ param_128s.set('N', 1464 - 834)
 param_128s.set('W', 244)
 param_128s.set('D', 6)
 parameter_sets += param_128f
+
+# parameter set: FAEST-192s
+param_192s = configuration_data()
+param_192s.set('PARAM', '192S')
+param_192s.set('PARAM_L', '192s')
+param_192s.set('LAMBDA', 192)
+param_192s.set('Nwd', 6)
+param_192s.set('L', 1040)
+param_192s.set('TAU', 16)
+param_192s.set('K0', 12)
+param_192s.set('K1', 12)
+param_192s.set('T0', 0)
+param_192s.set('T1', 16)
+param_192s.set('SIG_SIZE', 8304)
+param_192s.set('PK_SIZE', 142)
+param_192s.set('SK_SIZE', 56)
+#parameter_sets += param_192s
 
 # also make data from all parameter sets available "globally"
 parameter_data = configuration_data()

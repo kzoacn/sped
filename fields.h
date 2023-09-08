@@ -14,11 +14,15 @@
 FAEST_BEGIN_C_DECL
 
 
-#ifdef FAEST_BITS
 
-#if FAEST_BITS==192
 
-#elif FAEST_BITS==256
+
+
+#ifdef FAEST_128F_LAMBDA
+
+#if FAEST_128F_LAMBDA==192
+
+#elif FAEST_128F_LAMBDA==256
 
 #endif
 
