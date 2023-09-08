@@ -16,6 +16,8 @@ static const uint8_t domain_sep_H3 = 3;
 static const uint8_t domain_sep_H_mat = 4;
 static const uint8_t domain_sep_H_e = 5;
 
+static const uint8_t domain_sep_H_c = 6;
+
 // H_0
 void H0_init(H0_context_t* ctx, unsigned int security_param) {
   hash_init(ctx, security_param == 128 ? 128 : 256);
@@ -155,4 +157,20 @@ void generate_e(uint8_t *buffer,int m,int w,int d,const uint8_t* seed,int lambda
     buffer[i+offset] = 1;
   }
   free(tmp);
+}
+
+
+void H_c_init(H2_context_t* ctx, unsigned int security_param) {
+  hash_init(ctx, security_param == 128 ? 128 : 256);
+}
+
+void H_c_update(H2_context_t* ctx, const uint8_t* src, size_t len) {
+  hash_update(ctx, src, len);
+}
+
+void H_c_final(H2_context_t* ctx, uint8_t* digest, size_t len) {
+  hash_update(ctx, &domain_sep_H_c, sizeof(domain_sep_H_c));
+  hash_final(ctx);
+  hash_squeeze(ctx, digest, len);
+  hash_clear(ctx);
 }

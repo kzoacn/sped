@@ -74,6 +74,14 @@ void H_e_final(H_e_context_t* ctx, uint8_t* digest, size_t len);
 
 void generate_e(uint8_t *buffer,int m,int w,int d,const uint8_t* seed,int lambda);
 
+
+typedef hash_context H_c_context_t;
+
+void H_c_init(H_c_context_t* ctx, unsigned int security_param);
+void H_c_update(H_c_context_t* ctx, const uint8_t* src, size_t len);
+void H_c_final(H_c_context_t* ctx, uint8_t* digest, size_t len);
+
+
 FAEST_END_C_DECL
 
 #endif

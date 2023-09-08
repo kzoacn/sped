@@ -25,19 +25,6 @@ bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output) {
 
   memset(output, 0, output_len);
 
-  for(int i = 0; i < 16; i++) {
-    output[i]=input[i]^key[i];
-  }
-  for(int i=0;i+1<128;i++){
-    // i th bit of key
-    int bit_a = (key[i/8] >> (i%8)) & 1;
-    int bit_b = (key[(i+1)/8] >> ((i+1)%8)) & 1;
-    int bit_c = bit_a & bit_b;
-    //set i-th bit of output to bit_c
-    output[i/8] ^= (bit_c << (i%8));
-  }
-  // int ret=0;
-
   //generate mat H
   uint8_t *buffer, **H;
   buffer = (uint8_t *)malloc(n*m);

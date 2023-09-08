@@ -12,7 +12,7 @@
 #include "vole.h"
 #include "universal_hashing.h"
 #include "utils.h"
-
+#include "random_oracle.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -576,9 +576,14 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
                           uint8_t* b_tilde, const faest_paramset_t* params) {
   const unsigned int l    = params->faest_param.l;
   const unsigned int Lke  = params->faest_param.Lke;
-  const unsigned int R    = params->faest_param.R;
+  //const unsigned int R    = params->faest_param.R;
   const unsigned int Ske  = params->faest_param.Ske;
   const unsigned int Senc = params->faest_param.Senc;
+  const unsigned int n = params->faest_param.n;
+  const unsigned int m = params->faest_param.m;
+  const unsigned int D = params->faest_param.d;
+  const unsigned int lambda = params->faest_param.lambda;
+  const unsigned int lambdaBytes = lambda / 8;
 
   // Step: 1..2
   bf128_t* bf_v = column_to_row_major_and_shrink_V_128(V, l);
@@ -588,49 +593,67 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   // Step: 6
 
   // Step: 7
-  const unsigned int length_a = Ske + Senc + 1;
+  const unsigned int length_a = m/D + 1;
   bf128_t* A0                 = malloc(sizeof(bf128_t) * length_a);
   bf128_t* A1                 = malloc(sizeof(bf128_t) * length_a);
-  uint8_t* k                  = malloc((R + 1) * 128 / 8);
-  bf128_t* vk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
-  bf128_t* qk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
-  //if (Lke > 0) {
-  //  aes_key_schedule_constraints_128(w, bf_v, 0, NULL, NULL, A0, A1, k, vk, NULL, qk, params);
-  //}
-
-  // Step: Skipping 8 in implementation
-  // Step: 9
-
-  // Step: 10,11
-  //aes_enc_constraints_128(in, out, w + Lke / 8, bf_v + Lke, k, vk, 0, NULL, NULL, NULL, A0 + Ske, A1 + Ske, NULL, params);
-  // Step: 12 (beta == 1)
-
+  uint8_t* e = malloc(m);
 
   for(int i=0;i<length_a;i++){
     A0[i] = bf128_zero();
     A1[i] = bf128_zero();
   }
 
-
-  for(int i=0;i+1<128;i++){
-    // i th bit of key
-    int bit_a = (w[i/8] >> (i%8)) & 1;
-    int bit_b = (w[(i+1)/8] >> ((i+1)%8)) & 1;
-    int bit_c = bit_a & bit_b;
-
-    A0[i]=bf128_mul(bf_v[i],bf_v[i+1]);
-    A1[i]=bf128_add(bf128_add(bf128_mul(bf_v[i],bf128_from_bit(bit_b)),bf128_mul(bf_v[i+1],bf128_from_bit(bit_a)))
-                    ,bf_v[128+i]);
+  //unpack w to e
+  for(int i=0;i<m;i++){
+    e[i] = w[i/8] >> (i%8) & 1;
   }
-        //A0[j] = bf128_mul(vs[j], vs_dash[j]);
-      //A1[j] = bf128_add(
-          //bf128_add(bf128_mul(bf128_add(s[j], vs[j]), bf128_add(s_dash[j], vs_dash[j])), A0[j]),
-          //bf128_one());
+  
+  uint8_t *R = malloc(m*lambdaBytes);
+  uint8_t *S = malloc(m*lambdaBytes);
+  {
+    uint8_t *buffer = malloc(m*2*lambdaBytes);
+    H_c_context_t ctx;
+    H_c_init(&ctx, lambda);
+    H_c_update(&ctx, chall, lambdaBytes);
+    H_c_final(&ctx, buffer,m*2*lambdaBytes);
+    memcpy(R,buffer,m*lambdaBytes);
+    memcpy(S,buffer+m*lambdaBytes,m*lambdaBytes);
+    free(buffer);
+  }
+
+  for(int i=0;i<m/D;i++){
+    bf128_t z1 = bf128_zero();
+    bf128_t z2 = bf128_zero();
+    bf128_t z3 = bf128_zero();
+    bf128_t Mz1 = bf128_zero();
+    bf128_t Mz2 = bf128_zero();
+    bf128_t Mz3 = bf128_zero();
+
+    for(int j=0;j<D;j++){ 
+      int index = i*D+j;
+      bf128_t r = bf128_load(R+index*lambdaBytes);
+      bf128_t s = bf128_load(S+index*lambdaBytes);
+      z1 = bf128_add(z1,bf128_mul(r,bf128_from_bit(e[index])));
+      z2 = bf128_add(z2,bf128_mul(s,bf128_from_bit(e[index])));
+      Mz1 = bf128_add(Mz1,bf128_mul(r,bf_v[index]));
+      Mz2 = bf128_add(Mz2,bf128_mul(s,bf_v[index]));
+
+      z3 = bf128_add(z3,bf128_mul(bf128_mul(r,s),bf128_from_bit(e[index])));
+      Mz3 = bf128_add(Mz3,bf128_mul(bf128_mul(r,s),bf_v[index]));
+    }
+    // prove z1*z2=z3
 
 
-  free(qk);
-  free(vk);
-  free(k);
+    A0[i]=bf128_mul(Mz1,Mz2);
+    A1[i]=bf128_add(bf128_add(bf128_mul(Mz1,z2),bf128_mul(Mz2,z1)),Mz3);
+  }
+
+  free(e);
+  free(R);
+  free(S);
+  //free(qk);
+  //free(vk);
+  //free(k);
 
   // Step: 16..18
   A1[length_a - 1] = bf128_load(u + l / 8);
@@ -655,10 +678,13 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   const unsigned int k1          = params->faest_param.k1;
   const unsigned int l           = params->faest_param.l;
   const unsigned int Lke         = params->faest_param.Lke;
-  const unsigned int R           = params->faest_param.R;
+  //const unsigned int R           = params->faest_param.R;
   const unsigned int Ske         = params->faest_param.Ske;
   const unsigned int Senc        = params->faest_param.Senc;
   const unsigned int lambdaBytes = lambda / 8;
+  const unsigned int n = params->faest_param.n;
+  const unsigned int m = params->faest_param.m;
+  const unsigned int D = params->faest_param.d; 
 
   // Step: 1
   const uint8_t* delta = chall_3;
@@ -681,10 +707,10 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   bf128_t* bf_q = column_to_row_major_and_shrink_V_128(Q, l);
 
   // Step: 13
-  const unsigned int length_b = Ske + Senc + 1;
-  uint8_t* k                  = malloc((R + 1) * 128);
-  bf128_t* vk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
-  bf128_t* qk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
+  const unsigned int length_b = m/D + 1;
+  //uint8_t* k                  = malloc((R + 1) * 128);
+  //bf128_t* vk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
+  //bf128_t* qk                 = malloc(sizeof(bf128_t) * ((R + 1) * 128));
   bf128_t* B_0                = malloc(sizeof(bf128_t) * length_b);
   //if (Lke > 0) {
   //  aes_key_schedule_constraints_128(NULL, NULL, 1, bf_q, delta, NULL, NULL, k, vk, B_0, qk,params);
@@ -700,13 +726,41 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   }
 
 
-  for(int i=0;i+1<128;i++){
-    B_0[i]=bf128_add(bf128_mul(bf_q[i],bf_q[i+1]),bf128_mul(bf_q[128+i],bf128_load(delta)));
+  
+  uint8_t *R = malloc(m*lambdaBytes);
+  uint8_t *S = malloc(m*lambdaBytes);
+  {
+    uint8_t *buffer = malloc(m*2*lambdaBytes);
+    H_c_context_t ctx;
+    H_c_init(&ctx, lambda);
+    H_c_update(&ctx, chall_2, lambdaBytes);
+    H_c_final(&ctx, buffer,m*2*lambdaBytes);
+    memcpy(R,buffer,m*lambdaBytes);
+    memcpy(S,buffer+m*lambdaBytes,m*lambdaBytes);
+    free(buffer);
   }
-  // Step: 18 (beta == 1)
-  free(qk);
-  free(vk);
-  free(k);
+ 
+  for(int i=0;i<m/D;i++){
+    bf128_t Kz1 = bf128_zero();
+    bf128_t Kz2 = bf128_zero();
+    bf128_t Kz3 = bf128_zero();
+
+    for(int j=0;j<D;j++){ 
+      int index = i*D+j;
+      bf128_t r = bf128_load(R+index*lambdaBytes);
+      bf128_t s = bf128_load(S+index*lambdaBytes); 
+      Kz1 = bf128_add(Kz1,bf128_mul(r,bf_q[index]));
+      Kz2 = bf128_add(Kz2,bf128_mul(s,bf_q[index]));
+
+      Kz3 = bf128_add(Kz3,bf128_mul(bf128_mul(r,s),bf_q[index]));
+    }
+    // prove z1*z2=z3
+
+    B_0[i] = bf128_add( bf128_mul(Kz1,Kz2) , bf128_mul(Kz3,bf128_load(delta)));
+  }
+  
+  free(R);
+  free(S); 
 
   // Step: 20
   B_0[length_b - 1] = bf128_sum_poly(bf_q + l);
