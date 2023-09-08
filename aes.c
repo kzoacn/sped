@@ -430,12 +430,29 @@ uint8_t* aes_extend_witness(const uint8_t* key, const uint8_t* input, const faes
   }
 
   uint8_t *e = (uint8_t *)malloc(m);
+  uint8_t *compact_e = (uint8_t *)malloc((m-n)/d*(d-1));
+
   generate_e(e,m,params->faest_param.w,d,key,lambda);
 
+   puts("ans e");
+   for(int i=0;i<d;i++)
+     printf("%d",(int)e[i]);
+   puts("");
 
-  // pack e into w
-  for (int i = 0; i < m; i++) {
-    w[i / 8] |= (e[i] & 1) << (i % 8);
+  int cur = 0;
+  for(int i=n;i<m;i++){
+    if(i%d==d-1){
+      continue;
+    }else{
+      compact_e[cur++] = e[i];
+    }
+  }
+
+  // pack compact_e into w
+  for(int i=0;i<(m-n)/d*(d-1);i++){
+    if(compact_e[i]){
+      w[i/8] |= (1 << (i%8));
+    }
   }
 
 

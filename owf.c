@@ -61,6 +61,7 @@ bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output) {
     output[i/8] ^= (y[i] << (i%8));
   }
 
+  free(e);
   free(y);
   free(H);
   free(buffer);
