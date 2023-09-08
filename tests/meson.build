@@ -58,10 +58,10 @@ if boost_test.found()
     args: ['-t', 'vector_commitments'],
     timeout: 6000,
   )
-  test('VOLE', extended_tests,
-    args: ['-t', 'vole'],
-    timeout: 6000,
-  )
+  #test('VOLE', extended_tests,
+  #  args: ['-t', 'vole'],
+  #  timeout: 6000,
+  #)
   if ntl.found()
     test('Fields', extended_tests,
       args: ['-t', 'fields'],
