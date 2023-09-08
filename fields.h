@@ -75,7 +75,7 @@ ATTR_CONST ATTR_ALWAYS_INLINE static inline bf8_t bf8_one() {
   return 1;
 }
 
-bf8_t bf8_rand();
+bf8_t bf8_rand(); 
 
 ATTR_CONST ATTR_ALWAYS_INLINE inline bf8_t bf8_add(bf8_t lhs, bf8_t rhs) {
   return lhs ^ rhs;
