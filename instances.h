@@ -46,7 +46,7 @@ typedef struct faest_param_t {
   uint32_t pkSize;
 
   uint32_t m;
-  uint32_t k;
+  uint32_t n;
   uint32_t w;
   uint32_t d;
 } faest_param_t;

@@ -15,12 +15,12 @@
 bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output) {
 
   const faest_paramset_t paramset =  faest_get_paramset(FAEST_128S);
-  const int k = paramset.faest_param.k;
+  const int n = paramset.faest_param.n;
   const int m = paramset.faest_param.m;
   const int w = paramset.faest_param.w;
   const int d = paramset.faest_param.d;
   const int lambda = paramset.faest_param.lambda;
-  const int output_len = (k+7)/8;
+  const int output_len = (n+7)/8;
   int ret = 0; 
 
   memset(output, 0, output_len);
@@ -40,19 +40,19 @@ bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output) {
 
   //generate mat H
   uint8_t *buffer, **H;
-  buffer = (uint8_t *)malloc(k*m);
-  H = (uint8_t **)malloc(sizeof(uint8_t*) * k);
-  generate_H_mat(buffer,k,m,input,lambda);
+  buffer = (uint8_t *)malloc(n*m);
+  H = (uint8_t **)malloc(sizeof(uint8_t*) * n);
+  generate_H_mat(buffer,n,m,input,lambda);
   
-  for(int i=0;i<k;i++)
+  for(int i=0;i<n;i++)
     H[i] = buffer + i*m;
   
-  for(int i=0;i<k;i++)
+  for(int i=0;i<n;i++)
   for(int j=0;j<m;j++){
     if(i==j){
       H[i][j]=1;
     }else{
-      if(j<k)
+      if(j<n)
         H[i][j]=0;
       else
         H[i][j]=H[i][j]&1;
@@ -63,14 +63,14 @@ bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output) {
 
 
   // y=H*e
-  uint8_t *y = (uint8_t *)malloc(k);
-  memset(y,0,k);
-  for(int i=0;i<k;i++)
+  uint8_t *y = (uint8_t *)malloc(n);
+  memset(y,0,n);
+  for(int i=0;i<n;i++)
   for(int j=0;j<m;j++){
     y[i] ^= H[i][j] & e[j];
   }
   //pack y into output
-  for(int i=0;i<k;i++){
+  for(int i=0;i<n;i++){
     output[i/8] ^= (y[i] << (i%8));
   }
 
