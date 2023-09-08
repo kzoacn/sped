@@ -23,18 +23,14 @@ FAEST_BEGIN_C_DECL
 typedef enum faest_paramid_t {
   PARAMETER_SET_INVALID   = 0,
   FAEST_128S              = 1,
-  PARAMETER_SET_MAX_INDEX = 2
+  FAEST_128F              = 2,
+  PARAMETER_SET_MAX_INDEX = 13
 } faest_paramid_t;
 
 typedef struct faest_param_t {
   uint32_t lambda;
   uint32_t Nwd;
-  //uint32_t Ske;
-  //uint32_t R;
-  //uint32_t Senc;
   uint32_t l;
-  //uint32_t Lke;
-  //uint32_t Lenc;
   
   uint32_t tau;
   uint32_t k0;
