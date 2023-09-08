@@ -593,7 +593,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   // Step: 6
 
   // Step: 7
-  const unsigned int length_a = m/D + 1;
+  const unsigned int length_a = m/D*2 + 1;
   bf128_t* A0                 = malloc(sizeof(bf128_t) * length_a);
   bf128_t* A1                 = malloc(sizeof(bf128_t) * length_a);
   uint8_t* e = malloc(m);
@@ -685,7 +685,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     memcpy(S,buffer2+m*lambdaBytes,m*lambdaBytes); 
   
 
-  for(int i=0;i<1;i++){
+  for(int i=0;i<m/D;i++){
     bf128_t z1 = bf128_zero();
     bf128_t z2 = bf128_zero();
     bf128_t z3 = bf128_zero();
@@ -712,6 +712,15 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     A1[i]=bf128_add(bf128_add(bf128_mul(Mz1,z2),bf128_mul(Mz2,z1)),Mz3);
   }
 
+  for(int i=0;i<m/D;i++){
+    bf128_t s = bf128_zero();
+    for(int j=0;j<D;j++){
+      int index=i*D+j;
+      s=bf128_add(s,bf_e[index]);
+    }
+    A0[i+m/D]=s;
+    A1[i+m/D]=bf128_one();
+  }
 
   free(e);
   free(compact_e);
@@ -786,7 +795,7 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   bf128_t* bf_q = column_to_row_major_and_shrink_V_128(Q, l);
 
   // Step: 13
-  const unsigned int length_b = m/D + 1; 
+  const unsigned int length_b = m/D*2  + 1; 
   bf128_t* B_0                = malloc(sizeof(bf128_t) * length_b);  
 
 
@@ -855,7 +864,7 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
     memcpy(R,buffer2,m*lambdaBytes);
     memcpy(S,buffer2+m*lambdaBytes,m*lambdaBytes);  
  
-  for(int i=0;i<1;i++){
+  for(int i=0;i<m/D;i++){
     bf128_t Kz1 = bf128_zero();
     bf128_t Kz2 = bf128_zero();
     bf128_t Kz3 = bf128_zero();
@@ -873,7 +882,15 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
 
     B_0[i] = bf128_add( bf128_mul(Kz1,Kz2) , bf128_mul(Kz3,bf128_load(delta)));
   }
-  
+  for(int i=0;i<m/D;i++){
+    bf128_t s = bf128_zero();
+    for(int j=0;j<D;j++){
+      int index=i*D+j;
+      s=bf128_add(s,bf_e[index]);
+    }
+    B_0[i+m/D]=s;
+  }
+
   
   free(compact_e);
   free(bf_e);
