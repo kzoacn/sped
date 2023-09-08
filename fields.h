@@ -13,6 +13,31 @@
 
 FAEST_BEGIN_C_DECL
 
+
+#ifdef FAEST_BITS
+
+#if FAEST_BITS==192
+
+#elif FAEST_BITS==256
+
+#endif
+
+#else
+
+#define bf_t bf128_t
+#define bf_load bf128_load
+#define bf_store bf128_store
+#define bf_from_bit bf128_from_bit
+#define bf_zero bf128_zero
+#define bf_one bf128_one
+#define bf_add bf128_add
+#define bf_mul bf128_mul
+#define bf_sum_poly bf128_sum_poly
+#define bf_inv bf128_inv
+#define zk_hash zk_hash_128
+
+#endif
+
 typedef uint8_t bf8_t;
 typedef uint64_t bf64_t;
 
