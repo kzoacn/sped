@@ -29,12 +29,12 @@ typedef enum faest_paramid_t {
 typedef struct faest_param_t {
   uint32_t lambda;
   uint32_t Nwd;
-  uint32_t Ske;
-  uint32_t R;
-  uint32_t Senc;
+  //uint32_t Ske;
+  //uint32_t R;
+  //uint32_t Senc;
   uint32_t l;
-  uint32_t Lke;
-  uint32_t Lenc;
+  //uint32_t Lke;
+  //uint32_t Lenc;
   
   uint32_t tau;
   uint32_t k0;

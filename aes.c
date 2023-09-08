@@ -394,9 +394,6 @@ void prg(const uint8_t* key, const uint8_t* iv, uint8_t* out, unsigned int seclv
 uint8_t* aes_extend_witness(const uint8_t* key, const uint8_t* input, const faest_paramset_t* params) {
   const unsigned int lambda     = params->faest_param.lambda;
   const unsigned int l          = params->faest_param.l;
-  const unsigned int L_ke       = params->faest_param.Lke;
-  const unsigned int S_ke       = params->faest_param.Ske;
-  const unsigned int num_rounds = params->faest_param.R;
 
   const int n = params->faest_param.n;
   const int m = params->faest_param.m;
@@ -433,12 +430,7 @@ uint8_t* aes_extend_witness(const uint8_t* key, const uint8_t* input, const faes
   uint8_t *compact_e = (uint8_t *)malloc((m-n)/d*(d-1));
 
   generate_e(e,m,params->faest_param.w,d,key,lambda);
-
-   puts("ans e");
-   for(int i=0;i<d;i++)
-     printf("%d",(int)e[i]);
-   puts("");
-
+ 
   int cur = 0;
   for(int i=n;i<m;i++){
     if(i%d==d-1){

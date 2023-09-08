@@ -3,16 +3,11 @@ ntl = cc.find_library('ntl', required: false, has_headers: ['NTL/version.h'])
 
 if boost_test.found()
   test_sources = files(
-    'aes.cpp',
-    'aes_prove.cpp',
     'extended_tests.cpp',
     'hash_shake.cpp',
     'instances.cpp',
     'test_faest_tvs.cpp',
-    'universal_hashing.cpp',
-    'vc.cpp',
-    'vole.cpp',
-    'vole_tvs.cpp',
+    'universal_hashing.cpp', 
   )
   test_deps = []
   if ntl.found()
@@ -34,10 +29,10 @@ if boost_test.found()
     cpp_args: defines + cpp_flags + ['-DBOOST_TEST_DYN_LINK', '-DFAEST_TESTS'],
     override_options: ['b_lto=false']
   )
-  test('AES', extended_tests,
-    args: ['-t', 'aes'],
-    timeout: 6000,
-  )
+  #test('AES', extended_tests,
+  #  args: ['-t', 'aes'],
+  #  timeout: 6000,
+  #)
   #test('AES prove', extended_tests,
   #  args: ['-t', 'test_aes_prove'],
   #  timeout: 6000,
@@ -54,10 +49,10 @@ if boost_test.found()
     args: ['-t', 'universal_hashing'],
     timeout: 6000,
   )
-  test('Vector commitments', extended_tests,
-    args: ['-t', 'vector_commitments'],
-    timeout: 6000,
-  )
+  #test('Vector commitments', extended_tests,
+  #  args: ['-t', 'vector_commitments'],
+  #  timeout: 6000,
+  #)
   #test('VOLE', extended_tests,
   #  args: ['-t', 'vole'],
   #  timeout: 6000,

@@ -22,8 +22,6 @@ BOOST_DATA_TEST_CASE(test_keys, all_parameters, param_id) {
     BOOST_TEST(faest_param.k1 == std::floor((float)faest_param.lambda / faest_param.tau));
     BOOST_TEST(faest_param.t0 == faest_param.lambda % faest_param.tau);
     BOOST_TEST(faest_param.t1 == faest_param.tau - (faest_param.lambda % faest_param.tau));
-    BOOST_TEST(faest_param.Lke % 8 == 0);
-    BOOST_TEST(faest_param.Lenc % 8 == 0);
     BOOST_TEST(faest_param.l % 8 == 0);
     BOOST_TEST(faest_param.k0 <= MAX_DEPTH);
     BOOST_TEST(faest_param.k1 <= MAX_DEPTH);
