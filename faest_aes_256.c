@@ -16,22 +16,22 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define bf_t bf192_t
-#define bf_load bf192_load
-#define bf_store bf192_store
-#define bf_from_bit bf192_from_bit
-#define bf_zero bf192_zero
-#define bf_one bf192_one
-#define bf_add bf192_add
-#define bf_mul bf192_mul
-#define bf_sum_poly bf192_sum_poly
-#define bf_inv bf192_inv
-#define zk_hash zk_hash_192 
 
 
+#define bf_t bf256_t
+#define bf_load bf256_load
+#define bf_store bf256_store
+#define bf_from_bit bf256_from_bit
+#define bf_zero bf256_zero
+#define bf_one bf256_one
+#define bf_add bf256_add
+#define bf_mul bf256_mul
+#define bf_sum_poly bf256_sum_poly
+#define bf_inv bf256_inv
+#define zk_hash zk_hash_256
 
  
-static bf_t* column_to_row_major_and_shrink_V_192(uint8_t** v, unsigned int ell) {
+static bf_t* column_to_row_major_and_shrink_V_256(uint8_t** v, unsigned int ell) {
   // V is \hat \ell times \lambda matrix over F_2
   // v has \hat \ell rows, \lambda columns, storing in column-major order, new_v has \ell + \lambda
   // rows and \lambda columns storing in row-major order
@@ -47,7 +47,7 @@ static bf_t* column_to_row_major_and_shrink_V_192(uint8_t** v, unsigned int ell)
   return new_v;
 } 
 
-static void aes_prove_192(const uint8_t* w, const uint8_t* u, uint8_t** V, const uint8_t* input,
+static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const uint8_t* input,
                           const uint8_t* out, const uint8_t* chall, uint8_t* a_tilde,
                           uint8_t* b_tilde, const faest_paramset_t* params) {
   const unsigned int l    = params->faest_param.l;
@@ -58,7 +58,7 @@ static void aes_prove_192(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   const unsigned int lambdaBytes = lambda / 8;
 
   // Step: 1..2
-  bf_t* bf_v = column_to_row_major_and_shrink_V_192(V, l);
+  bf_t* bf_v = column_to_row_major_and_shrink_V_256(V, l);
 
   // Step: 3..4
   // do nothing
@@ -207,7 +207,7 @@ static void aes_prove_192(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   free(A1);
 }
 
-static uint8_t* aes_verify_192(const uint8_t* d, uint8_t** Q, const uint8_t* chall_2,
+static uint8_t* aes_verify_256(const uint8_t* d, uint8_t** Q, const uint8_t* chall_2,
                                const uint8_t* chall_3, const uint8_t* a_tilde, const uint8_t* input,
                                const uint8_t* out, const faest_paramset_t* params) {
   const unsigned int lambda      = params->faest_param.lambda;
@@ -251,7 +251,7 @@ static uint8_t* aes_verify_192(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   }
 
   // Step: 11..12
-  bf_t* bf_q = column_to_row_major_and_shrink_V_192(Q, l);
+  bf_t* bf_q = column_to_row_major_and_shrink_V_256(Q, l);
 
   // Step: 13
   const unsigned int length_b = m/D*2  + 1; 

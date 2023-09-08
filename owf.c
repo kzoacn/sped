@@ -12,16 +12,17 @@
 #include "random_oracle.h"
 #include "fields.h"
 
-bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output) {
+bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda) {
 
-  const faest_paramset_t paramset =  faest_get_paramset(FAEST_128S);
+  const faest_paramset_t paramset =  faest_get_paramset(lambda == 128 ? FAEST_128S : (lambda == 192 ? FAEST_192S : FAEST_256S));
   const int n = paramset.faest_param.n;
   const int m = paramset.faest_param.m;
   const int w = paramset.faest_param.w;
   const int d = paramset.faest_param.d;
-  const int lambda = paramset.faest_param.lambda;
+  //const int lambda = paramset.faest_param.lambda;
   const int output_len = (n+7)/8;
   int ret = 0; 
+  puts("OWF");
 
   memset(output, 0, output_len);
 
@@ -65,6 +66,28 @@ bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output) {
   free(y);
   free(H);
   free(buffer);
+  puts("AFTER OWF");
 
   return ret == 0;
 }//TODO
+
+bool faest_128s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 128);
+}
+bool faest_128f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 128);
+}
+
+bool faest_192s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 192);
+}
+bool faest_192f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 192);
+}
+
+bool faest_256s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 256);
+}
+bool faest_256f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 256);
+}

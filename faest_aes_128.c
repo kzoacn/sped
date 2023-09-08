@@ -16,6 +16,20 @@
 #include <string.h>
 #include <stdlib.h>
  
+
+#define bf_t bf128_t
+#define bf_load bf128_load
+#define bf_store bf128_store
+#define bf_from_bit bf128_from_bit
+#define bf_zero bf128_zero
+#define bf_one bf128_one
+#define bf_add bf128_add
+#define bf_mul bf128_mul
+#define bf_sum_poly bf128_sum_poly
+#define bf_inv bf128_inv
+#define zk_hash zk_hash_128 
+
+
 static bf_t* column_to_row_major_and_shrink_V_128(uint8_t** v, unsigned int ell) {
   // V is \hat \ell times \lambda matrix over F_2
   // v has \hat \ell rows, \lambda columns, storing in column-major order, new_v has \ell + \lambda
@@ -366,4 +380,4 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
 //                     const faest_paramset_t* params) {
     
 //     return aes_verify_internal(d, Q, chall_2, chall_3, a_tilde, in, out, params);
-// }
+// } 

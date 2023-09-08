@@ -12,10 +12,16 @@
 
 FAEST_BEGIN_C_DECL
 
-bool owf_128(const uint8_t* key, const uint8_t* input, uint8_t* output); 
+bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda); 
 
-#define faest_128s_owf owf_128 
-#define faest_128f_owf owf_128 
+bool faest_128s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output); 
+bool faest_128f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
+
+bool faest_192s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
+bool faest_192f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
+
+bool faest_256s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
+bool faest_256f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
 
 FAEST_END_C_DECL
 
