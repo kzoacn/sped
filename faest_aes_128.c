@@ -13,6 +13,7 @@
 #include "universal_hashing.h"
 #include "utils.h"
 #include "random_oracle.h"
+#include "time.h"
 #include <string.h>
 #include <stdlib.h>
  
@@ -75,7 +76,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   uint8_t *R = malloc(m*lambdaBytes);
   uint8_t *S = malloc(m*lambdaBytes);
   uint8_t *buffer2 = malloc(m*2*lambdaBytes);
-
+  bf_t* tmp = malloc(sizeof(bf_t) * m);
 
   for(uint32_t i=0;i<length_a;i++){
     A0[i] = bf_zero();
@@ -83,7 +84,8 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   }
 
   //generate mat H
-  buffer=generate_H_mat(n,m,input,lambda);
+ 
+  buffer=generate_H_mat(n,m,input,lambda); 
   
   //unpack out to y
 
@@ -112,17 +114,31 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
       cur++;
     }
   }
+ 
   for(uint32_t i=0;i<n;i++){
     e[i]=y[i];
     bf_e[i]=bf_zero();
+
     for(uint32_t j=n;j<m;j++){
-      int h=getH(i,j,n,m,buffer);
+      int index = i*(m-n)+j-n;
+      int h=buffer[index/8]>>(index%8)&1;
       e[i]^=(h&e[j]);
       if(h) 
-        bf_e[i]=bf_add(bf_e[i],bf_e[j]);
+        tmp[j-n]=bf_e[j];
+      else
+        tmp[j-n]=bf_zero();
     }
-  } 
-  
+
+    unsigned int len = m-n;
+    //parallel sum
+    while(len>1){
+      for(uint32_t j=0;j<len/2;j++){
+        tmp[j]=bf_add(tmp[j],tmp[j+(len+1)/2]);
+      }
+      len=len/2+len%2;
+    }
+    bf_e[i]=bf_add(bf_e[i],tmp[0]);
+  }  
   
     H_c_context_t ctx;
     H_c_init(&ctx, lambda);
@@ -131,6 +147,8 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     memcpy(R,buffer2,m*lambdaBytes);
     memcpy(S,buffer2+m*lambdaBytes,m*lambdaBytes); 
   
+
+
 
   for(uint32_t i=0;i<m/D;i++){
     bf_t z1 = bf_zero();
@@ -158,6 +176,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     A0[i]=bf_mul(Mz1,Mz2);
     A1[i]=bf_add(bf_add(bf_mul(Mz1,z2),bf_mul(Mz2,z1)),Mz3);
   }
+ 
 
   for(uint32_t i=0;i<m/D;i++){
     bf_t s = bf_zero();
@@ -169,6 +188,8 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     A1[i+m/D]=s;
   }
 
+
+  free(tmp);
   free(e);
   free(compact_e);
   free(bf_e);
@@ -183,11 +204,13 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   A0[length_a - 1] = bf_sum_poly(bf_v + l);
   free(bf_v);
 
+
   zk_hash(a_tilde, chall, A1, length_a - 1);
   zk_hash(b_tilde, chall, A0, length_a - 1);
 
   free(A0);
   free(A1);
+
 }
 
 static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* chall_2,
