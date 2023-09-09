@@ -27,25 +27,8 @@ bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda) 
   memset(output, 0, output_len);
 
   //generate mat H
-  uint8_t *buffer, **H;
-  buffer = (uint8_t *)malloc(n*m);
-  H = (uint8_t **)malloc(sizeof(uint8_t*) * n);
-  generate_H_mat(buffer,n,m,input,lambda);
+  uint8_t *buffer=generate_H_mat(n,m,input,lambda);
   
-  for(int i=0;i<n;i++)
-    H[i] = buffer + i*m;
-  
-  for(int i=0;i<n;i++)
-  for(int j=0;j<m;j++){
-    if(i==j){
-      H[i][j]=1;
-    }else{
-      if(j<n)
-        H[i][j]=0;
-      else
-        H[i][j]=H[i][j]&1;
-    }
-  }
   uint8_t *e = (uint8_t *)malloc(m);
   generate_e(e,m,w,d,key,lambda);
 
@@ -55,7 +38,7 @@ bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda) 
   memset(y,0,n);
   for(int i=0;i<n;i++)
   for(int j=0;j<m;j++){
-    y[i] ^= H[i][j] & e[j];
+    y[i] ^= getH(i,j,n,m,buffer) & e[j];
   }
   //pack y into output
   for(int i=0;i<n;i++){
@@ -64,7 +47,6 @@ bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda) 
 
   free(e);
   free(y);
-  free(H);
   free(buffer);
   puts("AFTER OWF");
 

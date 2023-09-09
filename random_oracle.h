@@ -62,7 +62,9 @@ void H_mat_init(H_mat_context_t* ctx, unsigned int security_param);
 void H_mat_update(H_mat_context_t* ctx, const uint8_t* src, size_t len);
 void H_mat_final(H_mat_context_t* ctx, uint8_t* digest, size_t len);
 
-void generate_H_mat(uint8_t *buffer, int k,int m,const uint8_t* seed,int lambda);
+uint8_t* generate_H_mat(int n,int m,const uint8_t* seed,int lambda);
+
+int getH(int i,int j,int n,int m,const uint8_t *buffer);
 
 // implementation for H_e
 

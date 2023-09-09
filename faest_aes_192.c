@@ -15,6 +15,7 @@
 #include "random_oracle.h"
 #include <string.h>
 #include <stdlib.h>
+ 
 
 #define bf_t bf192_t
 #define bf_load bf192_load
@@ -29,8 +30,6 @@
 #define zk_hash zk_hash_192 
 
 
-
- 
 static bf_t* column_to_row_major_and_shrink_V_192(uint8_t** v, unsigned int ell) {
   // V is \hat \ell times \lambda matrix over F_2
   // v has \hat \ell rows, \lambda columns, storing in column-major order, new_v has \ell + \lambda
@@ -72,9 +71,7 @@ static void aes_prove_192(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   uint8_t* compact_e = malloc((m-n)/D*(D-1));
   bf_t* bf_e = malloc(sizeof(bf_t) * m);
   uint8_t* y=malloc(n);
-  uint8_t *buffer, **H;
-  buffer = (uint8_t *)malloc(n*m);
-  H = (uint8_t **)malloc(sizeof(uint8_t*) * n);
+  uint8_t *buffer;
   uint8_t *R = malloc(m*lambdaBytes);
   uint8_t *S = malloc(m*lambdaBytes);
   uint8_t *buffer2 = malloc(m*2*lambdaBytes);
@@ -86,22 +83,8 @@ static void aes_prove_192(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   }
 
   //generate mat H
-  generate_H_mat(buffer,n,m,input,lambda);
+  buffer=generate_H_mat(n,m,input,lambda);
   
-  for(uint32_t i=0;i<n;i++)
-    H[i] = buffer + i*m;
-  
-  for(uint32_t i=0;i<n;i++)
-  for(uint32_t j=0;j<m;j++){
-    if(i==j){
-      H[i][j]=1;
-    }else{
-      if(j<n)
-        H[i][j]=0;
-      else
-        H[i][j]=H[i][j]&1;
-    }
-  }
   //unpack out to y
 
   for(uint32_t i=0;i<n;i++){
@@ -133,8 +116,9 @@ static void aes_prove_192(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     e[i]=y[i];
     bf_e[i]=bf_zero();
     for(uint32_t j=n;j<m;j++){
-      e[i]^=(H[i][j]&e[j]);
-      if(H[i][j]) 
+      int h=getH(i,j,n,m,buffer);
+      e[i]^=(h&e[j]);
+      if(h) 
         bf_e[i]=bf_add(bf_e[i],bf_e[j]);
     }
   } 
@@ -190,7 +174,6 @@ static void aes_prove_192(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   free(bf_e);
   free(y);
   free(buffer);
-  free(H);
   free(R);
   free(S);
   free(buffer2);
@@ -225,8 +208,7 @@ static uint8_t* aes_verify_192(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   uint8_t* compact_e = malloc((m-n)/D*(D-1));
   bf_t* bf_e = malloc(sizeof(bf_t) * m);
   uint8_t* y=malloc(n);
-  uint8_t *buffer = (uint8_t *)malloc(n*m);
-  uint8_t **H = (uint8_t **)malloc(sizeof(uint8_t*) * n);
+  uint8_t *buffer;
   uint8_t *R = malloc(m*lambdaBytes);
   uint8_t *S = malloc(m*lambdaBytes);
   uint8_t *buffer2 = malloc(m*2*lambdaBytes);
@@ -264,22 +246,8 @@ static uint8_t* aes_verify_192(const uint8_t* d, uint8_t** Q, const uint8_t* cha
 
 
   //generate mat H
-  generate_H_mat(buffer,n,m,input,lambda);
+  buffer=generate_H_mat(n,m,input,lambda);
   
-  for(uint32_t i=0;i<n;i++)
-    H[i] = buffer + i*m;
-  
-  for(uint32_t i=0;i<n;i++)
-  for(uint32_t j=0;j<m;j++){
-    if(i==j){
-      H[i][j]=1;
-    }else{
-      if(j<n)
-        H[i][j]=0;
-      else
-        H[i][j]=H[i][j]&1;
-    }
-  }
   //unpack out to y
 
   for(uint32_t i=0;i<n;i++){
@@ -304,7 +272,7 @@ static uint8_t* aes_verify_192(const uint8_t* d, uint8_t** Q, const uint8_t* cha
     if(y[i])
       bf_e[i]=bf_load(delta);
     for(uint32_t j=n;j<m;j++){
-      if(H[i][j]) 
+      if(getH(i,j,n,m,buffer)) 
         bf_e[i]=bf_add(bf_e[i],bf_e[j]);
     }
   } 
@@ -348,7 +316,6 @@ static uint8_t* aes_verify_192(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   free(bf_e);
   free(y);
   free(buffer);
-  free(H);
   free(R);
   free(S);
   free(buffer2);
@@ -366,4 +333,4 @@ static uint8_t* aes_verify_192(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   bf_store(q_tilde, bf_add(bf_qtilde, bf_mul(bf_load(a_tilde), bf_load(delta))));
 
   return q_tilde;
-} 
+}

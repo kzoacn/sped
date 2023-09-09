@@ -405,27 +405,6 @@ uint8_t* aes_extend_witness(const uint8_t* key, const uint8_t* input, const faes
   // w = 0
   memset(w, 0, (l + 7) / 8);
   
-  //generate mat H
-  uint8_t *buffer, **H;
-  buffer = (uint8_t *)malloc(n*m);
-  H = (uint8_t **)malloc(sizeof(uint8_t*) * n);
-  generate_H_mat(buffer,n,m,input,lambda);
-  
-  for(int i=0;i<n;i++)
-    H[i] = buffer + i*m;
-  
-  for(int i=0;i<n;i++)
-  for(int j=0;j<m;j++){
-    if(i==j){
-      H[i][j]=1;
-    }else{
-      if(j<n)
-        H[i][j]=0;
-      else
-        H[i][j]=H[i][j]&1;
-    }
-  }
-
   uint8_t *e = (uint8_t *)malloc(m);
   uint8_t *compact_e = (uint8_t *)malloc((m-n)/d*(d-1));
 
@@ -446,11 +425,6 @@ uint8_t* aes_extend_witness(const uint8_t* key, const uint8_t* input, const faes
       w[i/8] |= (1 << (i%8));
     }
   }
-
-
-  free(H);
-  free(buffer);
-
 
 
   return w_out;
