@@ -113,10 +113,10 @@ param_128f.set('T1', 16)
 param_128f.set('SIG_SIZE', 4528)
 param_128f.set('PK_SIZE', 95)
 param_128f.set('SK_SIZE', 32)
-param_128s.set('M', 1464)
-param_128s.set('N', 1464 - 834)
-param_128s.set('W', 244)
-param_128s.set('D', 6)
+param_128f.set('M', 1464)
+param_128f.set('N', 1464 - 834)
+param_128f.set('W', 244)
+param_128f.set('D', 6)
 parameter_sets += param_128f
 
 # parameter set: FAEST-192s

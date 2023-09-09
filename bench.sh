@@ -9,16 +9,10 @@ FAEST_192S="faest_192s"
 FAEST_192F="faest_192f"
 FAEST_256S="faest_256s"
 FAEST_256F="faest_256f"
-FAEST_EM_128S="faest_em_128s"
-FAEST_EM_128F="faest_em_128f"
-FAEST_EM_192S="faest_em_192s"
-FAEST_EM_192F="faest_em_192f"
-FAEST_EM_256S="faest_em_256s"
-FAEST_EM_256F="faest_em_256f"
 
-ALL="FAEST_128S FAEST_128F FAEST_192S FAEST_192F FAEST_256S FAEST_256F FAEST_EM_128S FAEST_EM_128F FAEST_EM_192S FAEST_EM_192F FAEST_EM_256S FAEST_EM_256F"
+ALL="FAEST_128S FAEST_128F FAEST_192S FAEST_192F FAEST_256S FAEST_256F"
 
-BUILD_DIR="build_release"
+BUILD_DIR="build"
 
 clean () {
     make clean
@@ -73,19 +67,19 @@ parse_output () {
     std_dev="`echo ${line3} | cut -d ' ' -f 1-2`"
     low_std_dev="`echo ${line3} | cut -d ' ' -f 3-4`"
     high_std_dev="`echo ${line3} | cut -d ' ' -f 5-6`"
-    json="`jq -n \
-        --argjson "samples" "${samples}" \
-        --argjson "iterations" "${iterations}" \
-        --argjson "estimated" "$(convert_to_us "${estimated}")" \
-        --argjson "mean_us" "$(convert_to_us "${mean}")" \
-        --argjson "low_mean_us" "$(convert_to_us "${low_mean}")" \
-        --argjson "high_mean_us" "$(convert_to_us "${high_mean}")" \
-        --argjson "std_dev_us" "$(convert_to_us "${std_dev}")" \
-        --argjson "low_std_dev_us" "$(convert_to_us "${low_std_dev}")" \
-        --argjson "high_std_dev_us" "$(convert_to_us "${high_std_dev}")" \
-        '$ARGS.named' \
-        `"
-    echo "${json}"
+    #json="`jq -n \
+    #    --argjson "samples" "${samples}" \
+    #    --argjson "iterations" "${iterations}" \
+    #    --argjson "estimated" "$(convert_to_us "${estimated}")" \
+    #    --argjson "mean_us" "$(convert_to_us "${mean}")" \
+    #    --argjson "low_mean_us" "$(convert_to_us "${low_mean}")" \
+    #    --argjson "high_mean_us" "$(convert_to_us "${high_mean}")" \
+    #    --argjson "std_dev_us" "$(convert_to_us "${std_dev}")" \
+    #    --argjson "low_std_dev_us" "$(convert_to_us "${low_std_dev}")" \
+    #    --argjson "high_std_dev_us" "$(convert_to_us "${high_std_dev}")" \
+    #    '$ARGS.named' \
+    #    `"
+    echo "${mean}"
 }
 
 gather_metadata () {
@@ -123,20 +117,24 @@ run_bench () {
     sign_results="`parse_output "${bench_sign_out}"`"
     verify_results="`parse_output "${bench_verify_out}"`"
 
-    json="`jq -c -n \
-        --arg "implementation" "ref" \
-        --arg "variant" "${name}" \
-        --arg "setting_id" "${setting_id}" \
-        --argjson "sig_size_bytes" "${sig_size}" \
-        --argjson "sk_size_bytes" "${sk_size}" \
-        --argjson "pk_size_bytes" "${pk_size}" \
-        --argjson "keygen" "${keygen_results}" \
-        --argjson "sign" "${sign_results}" \
-        --argjson "verify" "${verify_results}" \
-        --argjson "meta" "${meta}" \
-        '$ARGS.named' \
-        `"
-    echo "${json}"
+    #json="`jq -c -n \
+    #    --arg "implementation" "ref" \
+    #    --arg "variant" "${name}" \
+    #    --arg "setting_id" "${setting_id}" \
+    #    --argjson "sig_size_bytes" "${sig_size}" \
+    #    --argjson "sk_size_bytes" "${sk_size}" \
+    #    --argjson "pk_size_bytes" "${pk_size}" \
+    #    --argjson "keygen" "${keygen_results}" \
+    #    --argjson "sign" "${sign_results}" \
+    #    --argjson "verify" "${verify_results}" \
+    #    --argjson "meta" "${meta}" \
+    #    '$ARGS.named' \
+    #    `"
+    echo "${name} ${sig_size} ${sk_size} ${pk_size}"
+    echo "${keygen_results}"
+    echo "${sign_results}"
+    echo "${verify_results}"
+    echo "END"
 }
 
 bench_spec_variants () {
