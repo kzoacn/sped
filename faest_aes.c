@@ -51,8 +51,7 @@
 void aes_prove(const uint8_t* w, const uint8_t* u, uint8_t** V, const uint8_t* in,
                const uint8_t* out, const uint8_t* chall, uint8_t* a_tilde, uint8_t* b_tilde,
                const faest_paramset_t* params) {
-
-      puts("proveing");
+ 
   switch (params->faest_param.lambda) {
   case 256:
       aes_prove_256(w, u, V, in, out, chall, a_tilde, b_tilde, params);
@@ -62,8 +61,7 @@ void aes_prove(const uint8_t* w, const uint8_t* u, uint8_t** V, const uint8_t* i
     break;
   default:
       aes_prove_128(w, u, V, in, out, chall, a_tilde, b_tilde, params);
-  }
-  puts("after prove");
+  } 
 }
 
 uint8_t* aes_verify(const uint8_t* d, uint8_t** Q, const uint8_t* chall_2, const uint8_t* chall_3,

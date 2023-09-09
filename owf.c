@@ -21,8 +21,7 @@ bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda) 
   const int d = paramset.faest_param.d;
   //const int lambda = paramset.faest_param.lambda;
   const int output_len = (n+7)/8;
-  int ret = 0; 
-  puts("OWF");
+  int ret = 0;  
 
   memset(output, 0, output_len);
 
@@ -47,8 +46,7 @@ bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda) 
 
   free(e);
   free(y);
-  free(buffer);
-  puts("AFTER OWF");
+  free(buffer); 
 
   return ret == 0;
 }//TODO
