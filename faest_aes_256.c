@@ -13,6 +13,7 @@
 #include "universal_hashing.h"
 #include "utils.h"
 #include "random_oracle.h"
+#include "time.h"
 #include <string.h>
 #include <stdlib.h>
  
@@ -56,6 +57,8 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   const unsigned int lambda = params->faest_param.lambda;
   const unsigned int lambdaBytes = lambda / 8;
 
+
+  //double ck1=clock();
   // Step: 1..2
   bf_t* bf_v = column_to_row_major_and_shrink_V_256(V, l);
 
@@ -64,7 +67,7 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   // Step: 6
 
   // Step: 7
-  const unsigned int length_a = m/D*2 + 1;
+  const unsigned int length_a = m/D + 1;
   bf_t* A0                 = malloc(sizeof(bf_t) * length_a);
   bf_t* A1                 = malloc(sizeof(bf_t) * length_a);
   uint8_t* e = malloc(m);
@@ -75,7 +78,7 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   uint8_t *R = malloc(m*lambdaBytes);
   uint8_t *S = malloc(m*lambdaBytes);
   uint8_t *buffer2 = malloc(m*2*lambdaBytes);
-
+  bf_t* tmp = malloc(sizeof(bf_t) * m);
 
   for(uint32_t i=0;i<length_a;i++){
     A0[i] = bf_zero();
@@ -83,7 +86,8 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   }
 
   //generate mat H
-  buffer=generate_H_mat(n,m,input,lambda);
+ 
+  buffer=generate_H_mat(n,m,input,lambda); 
   
   //unpack out to y
 
@@ -112,17 +116,24 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
       cur++;
     }
   }
+ 
   for(uint32_t i=0;i<n;i++){
     e[i]=y[i];
     bf_e[i]=bf_zero();
+
     for(uint32_t j=n;j<m;j++){
-      int h=getH(i,j,n,m,buffer);
+      int index = i*(m-n)+j-n;
+      int h=buffer[index/8]>>(index%8)&1;
       e[i]^=(h&e[j]);
       if(h) 
         bf_e[i]=bf_add(bf_e[i],bf_e[j]);
+      else
+        bf_e[i]=bf_add(bf_e[i],bf_zero());
     }
-  } 
-  
+ 
+  }  
+
+  //double ck2=clock();
   
     H_c_context_t ctx;
     H_c_init(&ctx, lambda);
@@ -131,6 +142,8 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     memcpy(R,buffer2,m*lambdaBytes);
     memcpy(S,buffer2+m*lambdaBytes,m*lambdaBytes); 
   
+
+
 
   for(uint32_t i=0;i<m/D;i++){
     bf_t z1 = bf_zero();
@@ -144,13 +157,20 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
       uint32_t index = i*D+j;
       bf_t r = bf_load(R+index*lambdaBytes);
       bf_t s = bf_load(S+index*lambdaBytes);
-      z1 = bf_add(z1,bf_mul(r,bf_from_bit(e[index])));
-      z2 = bf_add(z2,bf_mul(s,bf_from_bit(e[index])));
+      bf_t rs = bf_mul(r,s);
+      if(e[index]==1){
+        z1 = bf_add(z1,r);
+        z2 = bf_add(z2,s);
+        z3 = bf_add(z3,rs);
+      }else{
+        z1 = bf_add(z1,bf_zero());
+        z2 = bf_add(z2,bf_zero());
+        z3 = bf_add(z3,bf_zero());
+      }
+
       Mz1 = bf_add(Mz1,bf_mul(r,bf_e[index]));
       Mz2 = bf_add(Mz2,bf_mul(s,bf_e[index]));
-
-      z3 = bf_add(z3,bf_mul(bf_mul(r,s),bf_from_bit(e[index])));
-      Mz3 = bf_add(Mz3,bf_mul(bf_mul(r,s),bf_e[index]));
+      Mz3 = bf_add(Mz3,bf_mul(rs,bf_e[index]));
     }
     // prove z1*z2=z3
 
@@ -158,8 +178,10 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     A0[i]=bf_mul(Mz1,Mz2);
     A1[i]=bf_add(bf_add(bf_mul(Mz1,z2),bf_mul(Mz2,z1)),Mz3);
   }
+ 
+  //double ck3=clock();
 
-  for(uint32_t i=0;i<m/D;i++){
+  /*for(uint32_t i=0;i<m/D;i++){
     bf_t s = bf_zero();
     for(uint32_t j=0;j<D;j++){
       uint32_t index=i*D+j;
@@ -167,8 +189,11 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     }
     A0[i+m/D]=bf_zero();
     A1[i+m/D]=s;
-  }
+  }*/
 
+  //double ck4=clock();
+
+  free(tmp);
   free(e);
   free(compact_e);
   free(bf_e);
@@ -183,11 +208,20 @@ static void aes_prove_256(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   A0[length_a - 1] = bf_sum_poly(bf_v + l);
   free(bf_v);
 
+
   zk_hash(a_tilde, chall, A1, length_a - 1);
   zk_hash(b_tilde, chall, A0, length_a - 1);
+  //double ck5=clock();
 
   free(A0);
   free(A1);
+ 
+  // printf("Total time for circuit prove: %f ms\n",(ck5-ck1)/CLOCKS_PER_SEC*1000);
+  // printf("Time for computing e: %f ms\n",(ck2-ck1)/CLOCKS_PER_SEC*1000);
+  // printf("Time for computing |e_i|<=1: %f ms\n",(ck3-ck2)/CLOCKS_PER_SEC*1000);
+  // printf("Time for computing 1*u=1: %f ms\n",(ck4-ck3)/CLOCKS_PER_SEC*1000);
+  // printf("Time for computing universal hash: %f ms\n",(ck5-ck4)/CLOCKS_PER_SEC*1000);
+
 }
 
 static uint8_t* aes_verify_256(const uint8_t* d, uint8_t** Q, const uint8_t* chall_2,
@@ -236,7 +270,7 @@ static uint8_t* aes_verify_256(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   bf_t* bf_q = column_to_row_major_and_shrink_V_256(Q, l);
 
   // Step: 13
-  const unsigned int length_b = m/D*2  + 1; 
+  const unsigned int length_b = m/D  + 1; 
   bf_t* B_0                = malloc(sizeof(bf_t) * length_b);  
 
 
@@ -302,14 +336,14 @@ static uint8_t* aes_verify_256(const uint8_t* d, uint8_t** Q, const uint8_t* cha
 
     B_0[i] = bf_add( bf_mul(Kz1,Kz2) , bf_mul(Kz3,bf_load(delta)));
   }
-  for(uint32_t i=0;i<m/D;i++){
+  /*for(uint32_t i=0;i<m/D;i++){
     bf_t s = bf_zero();
     for(uint32_t j=0;j<D;j++){
       uint32_t index=i*D+j;
       s=bf_add(s,bf_e[index]);
     }
     B_0[i+m/D]=bf_add( bf_mul(s,bf_load(delta)),bf_mul(bf_load(delta),bf_load(delta)) );
-  }
+  }*/
 
   
   free(compact_e);

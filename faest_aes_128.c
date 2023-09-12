@@ -58,7 +58,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   const unsigned int lambdaBytes = lambda / 8;
 
 
-  double ck1=clock();
+  //double ck1=clock();
   // Step: 1..2
   bf_t* bf_v = column_to_row_major_and_shrink_V_128(V, l);
 
@@ -130,11 +130,10 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
       else
         bf_e[i]=bf_add(bf_e[i],bf_zero());
     }
-
-    unsigned int len = m-n;
+ 
   }  
 
-  double ck2=clock();
+  //double ck2=clock();
   
     H_c_context_t ctx;
     H_c_init(&ctx, lambda);
@@ -180,7 +179,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     A1[i]=bf_add(bf_add(bf_mul(Mz1,z2),bf_mul(Mz2,z1)),Mz3);
   }
  
-  double ck3=clock();
+  //double ck3=clock();
 
   /*for(uint32_t i=0;i<m/D;i++){
     bf_t s = bf_zero();
@@ -192,7 +191,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     A1[i+m/D]=s;
   }*/
 
-  double ck4=clock();
+  //double ck4=clock();
 
   free(tmp);
   free(e);
@@ -212,7 +211,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
 
   zk_hash(a_tilde, chall, A1, length_a - 1);
   zk_hash(b_tilde, chall, A0, length_a - 1);
-  double ck5=clock();
+  //double ck5=clock();
 
   free(A0);
   free(A1);
