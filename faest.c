@@ -8,6 +8,7 @@
 
 #include "faest.h"
 #include "aes.h"
+#include "time.h"
 #include "faest_aes.h"
 #include "randomness.h"
 #include "random_oracle.h"
@@ -258,6 +259,8 @@ void faest_sign(uint8_t* sig, const uint8_t* msg, size_t msglen, const uint8_t* 
   const unsigned int ell_hat       = l + lambda * 2 + UNIVERSAL_HASH_B_BITS;
   const unsigned int ell_hat_bytes = ell_hat / 8;
 
+double ck1=clock();
+
   // Step: 2
   uint8_t mu[MAX_LAMBDA_BYTES * 2];
   hash_mu(mu, owf_input, owf_output, params->faest_param.lambda/8*2, params->faest_param.pkSize, msg, msglen, lambda);
@@ -355,6 +358,8 @@ void faest_sign(uint8_t* sig, const uint8_t* msg, size_t msglen, const uint8_t* 
   }
   free(vecCom);
   vecCom = NULL;
+  double ck2=clock();
+  //printf("sign time: %f\n",(ck2-ck1)/CLOCKS_PER_SEC*1000);
 }
 
 int faest_verify(const uint8_t* msg, size_t msglen, const uint8_t* sig, const uint8_t* owf_input,
