@@ -78,7 +78,6 @@ parameter_sets = []
 # parameter set: FAEST-128s
 param_128s = configuration_data()
 param_128s.set('PARAM', '128S')
-param_128s.set('PARAM', '128S')
 param_128s.set('PARAM_L', '128s')
 param_128s.set('LAMBDA', 128)
 param_128s.set('Nwd', 4)

@@ -83,7 +83,7 @@ faest_paramset_t faest_get_paramset(faest_paramid_t paramid) {
   case FAEST_128S:
     return (faest_paramset_t){FAEST_128S_PARAMS, FAEST_128S};
   case FAEST_128F:
-    return (faest_paramset_t){FAEST_128S_PARAMS, FAEST_128F};
+    return (faest_paramset_t){FAEST_128F_PARAMS, FAEST_128F};
   case FAEST_192S:
     return (faest_paramset_t){FAEST_192S_PARAMS, FAEST_192S};
   case FAEST_192F:
