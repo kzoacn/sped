@@ -1,67 +1,66 @@
-# Building: FAEST_128S (faest_128s)
-[3/3] Linking target faest_128s/faest_128s_api_test
+[9/9] Linking target faest_128s/faest_128s_api_test
 [1/1] Linking target faest_128s/faest_128s_bench_c2
 # Testing: FAEST_128S (faest_128s)
 Sign/Verify test passed
 # Benching: FAEST_128S (faest_128s)
-FAEST_128S 4264 32 86
-3.69896 ms
-58.4918 ms
-50.5749 ms
+FAEST_128S 4420 32 86
+3.73557 ms
+53.943 ms
+52.1632 ms
 END
 # Building: FAEST_128F (faest_128f)
-[1/1] Linking target faest_128f/faest_128f_api_test
-[1/1] Linking target faest_128f/faest_128f_bench_c2
+[4/4] Linking target faest_128f/faest_128f_api_test
+[2/2] Linking target faest_128f/faest_128f_bench_c2
 # Testing: FAEST_128F (faest_128f)
 Sign/Verify test passed
 # Benching: FAEST_128F (faest_128f)
-FAEST_128F 5824 32 86
-3.69254 ms
-44.7148 ms
-38.2653 ms
+FAEST_128F 5512 32 86
+3.74889 ms
+45.5962 ms
+37.7521 ms
 END
 # Building: FAEST_192S (faest_192s)
-[1/1] Linking target faest_192s/faest_192s_api_test
-[1/1] Linking target faest_192s/faest_192s_bench_c2
+[4/4] Linking target faest_192s/faest_192s_api_test
+[2/2] Linking target faest_192s/faest_192s_bench_c2
 # Testing: FAEST_192S (faest_192s)
 Sign/Verify test passed
 # Benching: FAEST_192S (faest_192s)
-FAEST_192S 9900 48 142
-9.83631 ms
-156.055 ms
-131.679 ms
+FAEST_192S 10584 48 142
+10.4693 ms
+156.395 ms
+129.477 ms
 END
 # Building: FAEST_192F (faest_192f)
-[1/1] Linking target faest_192f/faest_192f_api_test
-[1/1] Linking target faest_192f/faest_192f_bench_c2
+[4/4] Linking target faest_192f/faest_192f_api_test
+[2/2] Linking target faest_192f/faest_192f_bench_c2
 # Testing: FAEST_192F (faest_192f)
 Sign/Verify test passed
 # Benching: FAEST_192F (faest_192f)
-FAEST_192F 12636 48 142
-9.79508 ms
-143.139 ms
-115.222 ms
+FAEST_192F 13776 48 142
+9.91277 ms
+142.364 ms
+116.684 ms
 END
 # Building: FAEST_256S (faest_256s)
-[1/1] Linking target faest_256s/faest_256s_api_test
-[1/1] Linking target faest_256s/faest_256s_bench_c2
+[4/4] Linking target faest_256s/faest_256s_api_test
+[2/2] Linking target faest_256s/faest_256s_bench_c2
 # Testing: FAEST_256S (faest_256s)
 Sign/Verify test passed
 # Benching: FAEST_256S (faest_256s)
-FAEST_256S 18896 64 190
-17.7515 ms
-320.529 ms
-257.216 ms
+FAEST_256S 20720 64 190
+17.8642 ms
+314.161 ms
+251.276 ms
 END
 # Building: FAEST_256F (faest_256f)
-[1/1] Linking target faest_256f/faest_256f_api_test
-[1/1] Linking target faest_256f/faest_256f_bench_c2
+[4/4] Linking target faest_256f/faest_256f_api_test
+[2/2] Linking target faest_256f/faest_256f_bench_c2
 # Testing: FAEST_256F (faest_256f)
 Sign/Verify test passed
 # Benching: FAEST_256F (faest_256f)
-FAEST_256F 24368 64 190
-17.7439 ms
-304.791 ms
-247.28 ms
+FAEST_256F 26496 64 190
+17.8749 ms
+304.009 ms
+247.138 ms
 END
 
