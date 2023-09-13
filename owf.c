@@ -11,6 +11,7 @@
 #include "utils.h"
 #include "random_oracle.h"
 #include "fields.h"
+#include "time.h"
 
 bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda) {
 
@@ -27,7 +28,7 @@ bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda) 
 
   //generate mat H
   uint8_t *buffer=generate_H_mat(n,m,input,lambda);
-  
+
   uint8_t *e = (uint8_t *)malloc(m);
   generate_e(e,m,w,d,key,lambda);
 
