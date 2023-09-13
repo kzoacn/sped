@@ -7,6 +7,7 @@
         "random_oracle.h": "c",
         "utils.h": "c",
         "config.h": "c",
-        "macros.h": "c"
+        "macros.h": "c",
+        "array": "cpp"
     }
 }
