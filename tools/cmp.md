@@ -1,5 +1,4 @@
 | name | sig size | sk | pk | keygen | sign | verify |
-| ---- | -------- | -- | -- | ------ | ---- | ------ || name | sig size | sk | pk | keygen | sign | verify |
 | ---- | -------- | -- | -- | ------ | ---- | ------ |
 | Ours_128S | 4420 | 32 | 86 | 3.73557 ms | 53.943 ms | 52.1632 ms |
 | Ours_128F | 5512 | 32 | 86 | 3.74889 ms | 45.5962 ms | 37.7521 ms |
