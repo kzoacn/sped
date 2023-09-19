@@ -67,7 +67,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
   // Step: 6
 
   // Step: 7
-  const unsigned int length_a = m/D + 1;
+  const unsigned int length_a = m/D*2 + 1;
   bf_t* A0                 = malloc(sizeof(bf_t) * length_a);
   bf_t* A1                 = malloc(sizeof(bf_t) * length_a);
   uint8_t* e = malloc(m);
@@ -181,7 +181,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
  
   //double ck3=clock();
 
-  /*for(uint32_t i=0;i<m/D;i++){
+  for(uint32_t i=0;i<m/D;i++){
     bf_t s = bf_zero();
     for(uint32_t j=0;j<D;j++){
       uint32_t index=i*D+j;
@@ -189,7 +189,7 @@ static void aes_prove_128(const uint8_t* w, const uint8_t* u, uint8_t** V, const
     }
     A0[i+m/D]=bf_zero();
     A1[i+m/D]=s;
-  }*/
+  }
 
   //double ck4=clock();
 
@@ -270,7 +270,7 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
   bf_t* bf_q = column_to_row_major_and_shrink_V_128(Q, l);
 
   // Step: 13
-  const unsigned int length_b = m/D  + 1; 
+  const unsigned int length_b = m/D*2  + 1; 
   bf_t* B_0                = malloc(sizeof(bf_t) * length_b);  
 
 
@@ -336,14 +336,14 @@ static uint8_t* aes_verify_128(const uint8_t* d, uint8_t** Q, const uint8_t* cha
 
     B_0[i] = bf_add( bf_mul(Kz1,Kz2) , bf_mul(Kz3,bf_load(delta)));
   }
-  /*for(uint32_t i=0;i<m/D;i++){
+  for(uint32_t i=0;i<m/D;i++){
     bf_t s = bf_zero();
     for(uint32_t j=0;j<D;j++){
       uint32_t index=i*D+j;
       s=bf_add(s,bf_e[index]);
     }
     B_0[i+m/D]=bf_add( bf_mul(s,bf_load(delta)),bf_mul(bf_load(delta),bf_load(delta)) );
-  }*/
+  }
 
   
   free(compact_e);
