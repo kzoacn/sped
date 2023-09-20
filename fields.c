@@ -118,9 +118,7 @@ static inline bf128_t bf128_bit_to_mask_1(uint8_t bit) {
   return ret;
 }
 
-bf128_t bf128_mul_bit(bf128_t lhs, uint8_t rhs) {
-  return bf128_and(bf128_bit_to_mask_1(rhs), lhs);
-}
+ 
 
 bf128_t bf128_inv(bf128_t in) {
   bf128_t t1 = in;
@@ -193,10 +191,7 @@ static bf192_t bf192_bit_to_mask_1(uint8_t bit) {
   return ret;
 }
 
-bf192_t bf192_mul_bit(bf192_t lhs, uint8_t rhs) {
-  return bf192_and(bf192_bit_to_mask_1(rhs), lhs);
-}
-
+ 
 bf192_t bf192_inv(bf192_t in) {
   bf192_t t1 = in;
   bf192_t t2 = in;
@@ -269,9 +264,7 @@ static inline bf256_t bf256_bit_to_mask_1(uint8_t bit) {
   return ret;
 }
 
-bf256_t bf256_mul_bit(bf256_t lhs, uint8_t rhs) {
-  return bf256_and(bf256_bit_to_mask_1(rhs), lhs);
-}
+ 
 
 bf256_t bf256_inv(bf256_t in) {
   bf256_t t1 = in;
