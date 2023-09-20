@@ -52,7 +52,7 @@ ATTR_CONST ATTR_ALWAYS_INLINE static inline bf8_t bf8_one() {
   return 1;
 }
 
-bf8_t bf8_rand(); 
+//bf8_t bf8_rand(); 
 
 ATTR_CONST ATTR_ALWAYS_INLINE inline bf8_t bf8_add(bf8_t lhs, bf8_t rhs) {
   return lhs ^ rhs;
@@ -91,7 +91,7 @@ ATTR_CONST ATTR_ALWAYS_INLINE static inline bf64_t bf64_one() {
   return 1;
 }
 
-bf64_t bf64_rand();
+//bf64_t bf64_rand();
 
 ATTR_CONST ATTR_ALWAYS_INLINE static inline bf64_t bf64_add(bf64_t lhs, bf64_t rhs) {
   return lhs ^ rhs;
@@ -107,27 +107,13 @@ ATTR_CONST ATTR_ALWAYS_INLINE static inline bf64_t bf64_from_bit(uint8_t bit) {
 // GF(2^128) implementation
 
 ATTR_PURE ATTR_ALWAYS_INLINE static inline bf128_t bf128_load(const uint8_t* src) {
-  bf128_t ret;
-#if defined(FAEST_IS_BIG_ENDIAN)
-  for (unsigned int i = 0; i != ARRAY_SIZE(ret.values); ++i, src += sizeof(uint64_t)) {
-    memcpy(&ret.values[i], src, sizeof(ret.values[i]));
-    ret.values[i] = le64toh(ret.values[i]);
-  }
-#else
-  memcpy(&ret, src, sizeof(ret));
-#endif
+  bf128_t ret; 
+  memcpy(&ret, src, sizeof(ret)); 
   return ret;
 }
 
-ATTR_ALWAYS_INLINE static inline void bf128_store(uint8_t* dst, bf128_t src) {
-#if defined(FAEST_IS_BIG_ENDIAN)
-  for (unsigned int i = 0; i != ARRAY_SIZE(src.values); ++i, dst += sizeof(uint64_t)) {
-    uint64_t tmp = htole64(src.values[i]);
-    memcpy(dst, &tmp, sizeof(tmp));
-  }
-#else
-  memcpy(dst, &src, sizeof(src));
-#endif
+ATTR_ALWAYS_INLINE static inline void bf128_store(uint8_t* dst, bf128_t src) { 
+  memcpy(dst, &src, sizeof(src)); 
 }
 
 ATTR_CONST ATTR_ALWAYS_INLINE static inline bf128_t bf128_from_bf64(bf64_t src) {
@@ -157,11 +143,7 @@ ATTR_CONST ATTR_ALWAYS_INLINE static inline bf128_t bf128_one() {
   bf128_t r = {{1, 0}};
   return r;
 }
-
-ATTR_PURE bf128_t bf128_byte_combine(const bf128_t* x);
-ATTR_PURE bf128_t bf128_byte_combine_bits(uint8_t x);
-bf128_t bf128_rand();
-
+ 
 ATTR_CONST static inline bf128_t bf128_add(bf128_t lhs, bf128_t rhs) {
   for (unsigned int i = 0; i != ARRAY_SIZE(lhs.values); ++i) {
     lhs.values[i] ^= rhs.values[i];
@@ -228,9 +210,6 @@ ATTR_CONST ATTR_ALWAYS_INLINE static inline bf192_t bf192_one() {
   return r;
 }
 
-ATTR_PURE bf192_t bf192_byte_combine(const bf192_t* x);
-ATTR_PURE bf192_t bf192_byte_combine_bits(uint8_t x);
-bf192_t bf192_rand();
 
 ATTR_CONST static inline bf192_t bf192_add(bf192_t lhs, bf192_t rhs) {
   for (unsigned int i = 0; i != ARRAY_SIZE(lhs.values); ++i) {
@@ -297,11 +276,7 @@ ATTR_CONST ATTR_ALWAYS_INLINE static inline bf256_t bf256_one() {
   bf256_t r = {{1, 0, 0, 0}};
   return r;
 }
-
-ATTR_PURE bf256_t bf256_byte_combine(const bf256_t* x);
-ATTR_PURE bf256_t bf256_byte_combine_bits(uint8_t x);
-bf256_t bf256_rand();
-
+ 
 ATTR_CONST static inline bf256_t bf256_add(bf256_t lhs, bf256_t rhs) {
   for (unsigned int i = 0; i != ARRAY_SIZE(lhs.values); ++i) {
     lhs.values[i] ^= rhs.values[i];

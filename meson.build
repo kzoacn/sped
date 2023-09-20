@@ -74,25 +74,28 @@ conf_data.set('HAVE_TIMINGSAFE_BCMP', cc.has_header_symbol('string.h', 'timingsa
 # parameter sets
 # After changing the parameter sets, be sure to run crypto_sign_generator.py to create the corresponding meson files.
 parameter_sets = []
+
 param_128s = configuration_data()
 param_128s.set('PARAM', '128S')
 param_128s.set('PARAM_L', '128s')
 param_128s.set('LAMBDA', 128)
 param_128s.set('Nwd', 4)
-param_128s.set('L', 696)
-param_128s.set('TAU', 12)
-param_128s.set('K0', 11)
-param_128s.set('K1', 10)
-param_128s.set('T0', 8)
+param_128s.set('L', 616)
+param_128s.set('TAU', 11)
+param_128s.set('K0', 12)
+param_128s.set('K1', 11)
+param_128s.set('T0', 7)
 param_128s.set('T1', 4)
-param_128s.set('SIG_SIZE', 3916)
-param_128s.set('PK_SIZE', 96)
+param_128s.set('SIG_SIZE', 3653)
+param_128s.set('PK_SIZE', 87)
 param_128s.set('SK_SIZE', 32)
-param_128s.set('M', 1470)
-param_128s.set('N', 636)
-param_128s.set('W', 245)
+param_128s.set('M', 1302)
+param_128s.set('N', 564)
+param_128s.set('W', 217)
 param_128s.set('D', 6)
 parameter_sets += param_128s
+
+
 
 param_192s = configuration_data()
 param_192s.set('PARAM', '192S')

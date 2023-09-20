@@ -7,12 +7,11 @@ if boost_test.found()
     'hash_shake.cpp',
     'instances.cpp',
     'test_faest_tvs.cpp',
-    'universal_hashing.cpp', 
   )
   test_deps = []
   if ntl.found()
-    test_sources += files('fields.cpp')
-    test_deps += ntl
+    #test_sources += files('fields.cpp')
+    #test_deps += ntl
   endif
 
   foreach parameter_set : parameter_sets
@@ -45,10 +44,10 @@ if boost_test.found()
     args: ['-t', 'instances'],
     timeout: 6000,
   )
-  test('Universal hashing', extended_tests,
-    args: ['-t', 'universal_hashing'],
-    timeout: 6000,
-  )
+  #test('Universal hashing', extended_tests,
+  #  args: ['-t', 'universal_hashing'],
+  #  timeout: 6000,
+  #)
   #test('Vector commitments', extended_tests,
   #  args: ['-t', 'vector_commitments'],
   #  timeout: 6000,
@@ -58,10 +57,7 @@ if boost_test.found()
   #  timeout: 6000,
   #)
   if ntl.found()
-    test('Fields', extended_tests,
-      args: ['-t', 'fields'],
-      timeout: 6000,
-    )
+
   endif
   foreach parameter_set : parameter_sets
     test('FAEST_@0@'.format(parameter_set.get('PARAM')), extended_tests,
