@@ -1,33 +1,35 @@
-[9/9] Linking target faest_128s/faest_128s_api_test
-[2/2] Linking target faest_128s/faest_128s_bench_c2
-# Testing: FAEST_128S (faest_128s)
+Found ninja-1.10.0 at /usr/bin/ninja
+Cleaning... 0 files.                                                            
+[12/12] Linking target faest_128f/faest_128f_api_test
+[2/2] Linking target faest_128f/faest_128f_bench_c2
+# Testing: FAEST_128F (faest_128f)
 Sign/Verify test passed
-# Benching: FAEST_128S (faest_128s)
-FAEST_128S 3916 32 96
-4.36005 ms
-97.5137 ms
-80.2091 ms
+# Benching: FAEST_128F (faest_128f)
+FAEST_128F 8047 32 96
+4.37292 ms
+59.2537 ms
+48.4413 ms
 END
-# Building: FAEST_192S (faest_192s)
-[4/4] Linking target faest_192s/faest_192s_api_test
-[2/2] Linking target faest_192s/faest_192s_bench_c2
-# Testing: FAEST_192S (faest_192s)
+# Building: FAEST_192F (faest_192f)
+[4/4] Linking target faest_192f/faest_192f_api_test
+[2/2] Linking target faest_192f/faest_192f_bench_c2
+# Testing: FAEST_192F (faest_192f)
 Sign/Verify test passed
-# Benching: FAEST_192S (faest_192s)
-FAEST_192S 8532 48 143
-9.96585 ms
-257.372 ms
-226.706 ms
+# Benching: FAEST_192F (faest_192f)
+FAEST_192F 21528 48 143
+9.86471 ms
+150.47 ms
+118.968 ms
 END
-# Building: FAEST_256S (faest_256s)
-[1/1] Linking target faest_256s/faest_256s_api_test
-[1/1] Linking target faest_256s/faest_256s_bench_c2
-# Testing: FAEST_256S (faest_256s)
+# Building: FAEST_256F (faest_256f)
+[4/4] Linking target faest_256f/faest_256f_api_test
+[2/2] Linking target faest_256f/faest_256f_bench_c2
+# Testing: FAEST_256F (faest_256f)
 Sign/Verify test passed
-# Benching: FAEST_256S (faest_256s)
-FAEST_256S 14944 64 191
-17.658 ms
-537.54 ms
-469.721 ms
+# Benching: FAEST_256F (faest_256f)
+FAEST_256F 41696 64 191
+17.496 ms
+319.417 ms
+255.286 ms
 END
 

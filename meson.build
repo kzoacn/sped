@@ -80,22 +80,20 @@ param_128s.set('PARAM', '128S')
 param_128s.set('PARAM_L', '128s')
 param_128s.set('LAMBDA', 128)
 param_128s.set('Nwd', 4)
-param_128s.set('L', 616)
+param_128s.set('L', 696)
 param_128s.set('TAU', 11)
 param_128s.set('K0', 12)
 param_128s.set('K1', 11)
 param_128s.set('T0', 7)
 param_128s.set('T1', 4)
-param_128s.set('SIG_SIZE', 3653)
-param_128s.set('PK_SIZE', 87)
+param_128s.set('SIG_SIZE', 3763)
+param_128s.set('PK_SIZE', 96)
 param_128s.set('SK_SIZE', 32)
-param_128s.set('M', 1302)
-param_128s.set('N', 564)
-param_128s.set('W', 217)
+param_128s.set('M', 1470)
+param_128s.set('N', 636)
+param_128s.set('W', 245)
 param_128s.set('D', 6)
 parameter_sets += param_128s
-
-
 
 param_192s = configuration_data()
 param_192s.set('PARAM', '192S')
@@ -138,74 +136,68 @@ param_256s.set('D', 6)
 parameter_sets += param_256s
 
 
-
-
-
-
-# parameter set: FAEST-128f
 param_128f = configuration_data()
 param_128f.set('PARAM', '128F')
 param_128f.set('PARAM_L', '128f')
 param_128f.set('LAMBDA', 128)
 param_128f.set('Nwd', 4)
-param_128f.set('L', 720)
-param_128f.set('TAU', 22)
-param_128f.set('K0', 6)
-param_128f.set('K1', 5)
-param_128f.set('T0', 18)
-param_128f.set('T1', 4)
-param_128f.set('SIG_SIZE', 5512)
-param_128f.set('PK_SIZE', 86)
+param_128f.set('L', 696)
+param_128f.set('TAU', 39)
+param_128f.set('K0', 4)
+param_128f.set('K1', 3)
+param_128f.set('T0', 11)
+param_128f.set('T1', 28)
+param_128f.set('SIG_SIZE', 8047)
+param_128f.set('PK_SIZE', 96)
 param_128f.set('SK_SIZE', 32)
-param_128f.set('M', 1393)
-param_128f.set('N', 1393 - 833)
-param_128f.set('W', 199)
-param_128f.set('D', 7)
-#parameter_sets += param_128f
+param_128f.set('M', 1470)
+param_128f.set('N', 636)
+param_128f.set('W', 245)
+param_128f.set('D', 6)
+parameter_sets += param_128f
 
 
 
-# parameter set: FAEST-192f
 param_192f = configuration_data()
 param_192f.set('PARAM', '192F')
 param_192f.set('PARAM_L', '192f')
 param_192f.set('LAMBDA', 192)
 param_192f.set('Nwd', 6)
-param_192f.set('L', 1040) 
-param_192f.set('TAU', 40)
-param_192f.set('K0', 5)
-param_192f.set('K1', 4)
-param_192f.set('T0', 32)
-param_192f.set('T1', 8)
-param_192f.set('SIG_SIZE', 13776)
-param_192f.set('PK_SIZE', 142)
+param_192f.set('L', 1040)
+param_192f.set('TAU', 74)
+param_192f.set('K0', 3)
+param_192f.set('K1', 2)
+param_192f.set('T0', 44)
+param_192f.set('T1', 30)
+param_192f.set('SIG_SIZE', 21528)
+param_192f.set('PK_SIZE', 143)
 param_192f.set('SK_SIZE', 48)
-param_192f.set('M', 2190)
-param_192f.set('N', 2190 - 1248)
-param_192f.set('W', 365)
+param_192f.set('M', 2196)
+param_192f.set('N', 948)
+param_192f.set('W', 366)
 param_192f.set('D', 6)
-#parameter_sets += param_192f
+parameter_sets += param_192f
 
-# parameter set: FAEST-256f
 param_256f = configuration_data()
 param_256f.set('PARAM', '256F')
 param_256f.set('PARAM_L', '256f')
 param_256f.set('LAMBDA', 256)
 param_256f.set('Nwd', 8)
-param_256f.set('L', 1392) 
-param_256f.set('TAU', 60)
-param_256f.set('K0', 5)
-param_256f.set('K1', 4)
-param_256f.set('T0', 16)
-param_256f.set('T1', 44)
-param_256f.set('SIG_SIZE', 26496)
-param_256f.set('PK_SIZE', 190)
+param_256f.set('L', 1392)
+param_256f.set('TAU', 110)
+param_256f.set('K0', 3)
+param_256f.set('K1', 2)
+param_256f.set('T0', 36)
+param_256f.set('T1', 74)
+param_256f.set('SIG_SIZE', 41696)
+param_256f.set('PK_SIZE', 191)
 param_256f.set('SK_SIZE', 64)
-param_256f.set('M', 2928)
-param_256f.set('N', 2928 - 1668)
-param_256f.set('W', 488)
+param_256f.set('M', 2934)
+param_256f.set('N', 1266)
+param_256f.set('W', 489)
 param_256f.set('D', 6)
-#parameter_sets += param_256f
+parameter_sets += param_256f
+
 
 
 # also make data from all parameter sets available "globally"
