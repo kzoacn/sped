@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define MAX_LAMBDA 256
+#define MAX_LAMBDA 512
 #define MAX_LAMBDA_BYTES (MAX_LAMBDA / 8)
 #define MAX_DEPTH 12
 #define MAX_TAU 128
@@ -28,6 +28,8 @@ typedef enum faest_paramid_t {
   FAEST_192F              = 4,
   FAEST_256S              = 5,
   FAEST_256F              = 6,
+  FAEST_320F              = 7,
+  FAEST_512F              = 8,
   PARAMETER_SET_MAX_INDEX = 13
 } faest_paramid_t;
 

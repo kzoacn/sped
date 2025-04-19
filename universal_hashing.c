@@ -142,8 +142,86 @@ void vole_hash_256(uint8_t* h, const uint8_t* sd, const uint8_t* x, unsigned int
   xor_u8_array(h, x1, h, sizeof(bf256_t) + UNIVERSAL_HASH_B);
 }
 
+
+void vole_hash_320(uint8_t* h, const uint8_t* sd, const uint8_t* x, unsigned int ell) {
+  const uint8_t* r0 = sd;
+  const uint8_t* r1 = sd + 1 * sizeof(bf320_t);
+  const uint8_t* r2 = sd + 2 * sizeof(bf320_t);
+  const uint8_t* r3 = sd + 3 * sizeof(bf320_t);
+  const uint8_t* s  = sd + 4 * sizeof(bf320_t);
+  const uint8_t* t  = sd + 5 * sizeof(bf320_t);
+  const uint8_t* x1 = x + (ell + sizeof(bf320_t) * 8) / 8;
+
+  const unsigned int length_lambda = (ell + 2 * sizeof(bf320_t) * 8 - 1) / (sizeof(bf320_t) * 8);
+
+  uint8_t tmp[sizeof(bf320_t)] = {0};
+  memcpy(tmp, x + (length_lambda - 1) * sizeof(bf320_t),
+         (ell + sizeof(bf320_t) * 8) % (sizeof(bf320_t) * 8) == 0
+             ? sizeof(bf320_t)
+             : ((ell + sizeof(bf320_t) * 8) % (sizeof(bf320_t) * 8)) / 8);
+  bf320_t h0 = bf320_load(tmp);
+
+  const bf320_t b_s = bf320_load(s);
+  bf320_t running_s = b_s;
+  for (unsigned int i = 1; i != length_lambda; ++i, running_s = bf320_mul(running_s, b_s)) {
+    h0 = bf320_add(h0,
+                   bf320_mul(running_s, bf320_load(x + (length_lambda - 1 - i) * sizeof(bf320_t))));
+  }
+
+  bf320_t h1p = bf320_from_bf64(compute_h1(t, x, sizeof(bf320_t) * 8, ell));
+  bf320_t h2  = bf320_add(bf320_mul(bf320_load(r0), h0), bf320_mul(bf320_load(r1), h1p));
+  bf320_t h3  = bf320_add(bf320_mul(bf320_load(r2), h0), bf320_mul(bf320_load(r3), h1p));
+
+  bf320_store(h, h2);
+  bf320_store(tmp, h3);
+  memcpy(h + sizeof(bf320_t), tmp, UNIVERSAL_HASH_B);
+  xor_u8_array(h, x1, h, sizeof(bf320_t) + UNIVERSAL_HASH_B);
+}
+
+void vole_hash_512(uint8_t* h, const uint8_t* sd, const uint8_t* x, unsigned int ell) {
+  const uint8_t* r0 = sd;
+  const uint8_t* r1 = sd + 1 * sizeof(bf512_t);
+  const uint8_t* r2 = sd + 2 * sizeof(bf512_t);
+  const uint8_t* r3 = sd + 3 * sizeof(bf512_t);
+  const uint8_t* s  = sd + 4 * sizeof(bf512_t);
+  const uint8_t* t  = sd + 5 * sizeof(bf512_t);
+  const uint8_t* x1 = x + (ell + sizeof(bf512_t) * 8) / 8;
+
+  const unsigned int length_lambda = (ell + 2 * sizeof(bf512_t) * 8 - 1) / (sizeof(bf512_t) * 8);
+
+  uint8_t tmp[sizeof(bf512_t)] = {0};
+  memcpy(tmp, x + (length_lambda - 1) * sizeof(bf512_t),
+         (ell + sizeof(bf512_t) * 8) % (sizeof(bf512_t) * 8) == 0
+             ? sizeof(bf512_t)
+             : ((ell + sizeof(bf512_t) * 8) % (sizeof(bf512_t) * 8)) / 8);
+  bf512_t h0 = bf512_load(tmp);
+
+  const bf512_t b_s = bf512_load(s);
+  bf512_t running_s = b_s;
+  for (unsigned int i = 1; i != length_lambda; ++i, running_s = bf512_mul(running_s, b_s)) {
+    h0 = bf512_add(h0,
+                   bf512_mul(running_s, bf512_load(x + (length_lambda - 1 - i) * sizeof(bf512_t))));
+  }
+
+  bf512_t h1p = bf512_from_bf64(compute_h1(t, x, sizeof(bf512_t) * 8, ell));
+  bf512_t h2  = bf512_add(bf512_mul(bf512_load(r0), h0), bf512_mul(bf512_load(r1), h1p));
+  bf512_t h3  = bf512_add(bf512_mul(bf512_load(r2), h0), bf512_mul(bf512_load(r3), h1p));
+
+  bf512_store(h, h2);
+  bf512_store(tmp, h3);
+  memcpy(h + sizeof(bf512_t), tmp, UNIVERSAL_HASH_B);
+  xor_u8_array(h, x1, h, sizeof(bf512_t) + UNIVERSAL_HASH_B);
+}
+
+
 void vole_hash(uint8_t* h, const uint8_t* sd, const uint8_t* x, unsigned int ell, uint32_t lambda) {
   switch (lambda) {
+  case 512:
+    vole_hash_512(h, sd, x, ell);
+    break;
+  case 320:
+    vole_hash_320(h, sd, x, ell);
+    break;
   case 256:
     vole_hash_256(h, sd, x, ell);
     break;
@@ -223,4 +301,51 @@ void zk_hash_256(uint8_t* h, const uint8_t* sd, const bf256_t* x, unsigned int e
 
   h0 = bf256_add(bf256_add(bf256_mul(bf256_load(r0), h0), bf256_mul(bf256_load(r1), h1)), *x1);
   bf256_store(h, h0);
+}
+
+void zk_hash_320(uint8_t* h, const uint8_t* sd, const bf320_t* x, unsigned int ell) {
+  const uint8_t* r0 = sd;
+  const uint8_t* r1 = sd + 320 / 8;
+  const uint8_t* s  = sd + 2 * 320 / 8;
+  const uint8_t* t  = sd + 3 * 320 / 8;
+  const bf320_t* x1 = x + ell;
+
+  bf320_t b_s       = bf320_load(s);
+  bf320_t b_t       = bf320_from_bf64(bf64_load(t));
+  bf320_t running_s = bf320_one();
+  bf320_t running_t = bf320_one();
+  bf320_t h0        = bf320_zero();
+  bf320_t h1        = bf320_zero();
+  for (unsigned int i = 0; i != ell;
+       ++i, running_s = bf320_mul(running_s, b_s), running_t = bf320_mul(running_t, b_t)) {
+    h0 = bf320_add(h0, bf320_mul(running_s, x[ell - 1 - i]));
+    h1 = bf320_add(h1, bf320_mul(running_t, x[ell - 1 - i]));
+  }
+
+  h0 = bf320_add(bf320_add(bf320_mul(bf320_load(r0), h0), bf320_mul(bf320_load(r1), h1)), *x1);
+  bf320_store(h, h0);
+}
+
+
+void zk_hash_512(uint8_t* h, const uint8_t* sd, const bf512_t* x, unsigned int ell) {
+  const uint8_t* r0 = sd;
+  const uint8_t* r1 = sd + 512 / 8;
+  const uint8_t* s  = sd + 2 * 512 / 8;
+  const uint8_t* t  = sd + 3 * 512 / 8;
+  const bf512_t* x1 = x + ell;
+
+  bf512_t b_s       = bf512_load(s);
+  bf512_t b_t       = bf512_from_bf64(bf64_load(t));
+  bf512_t running_s = bf512_one();
+  bf512_t running_t = bf512_one();
+  bf512_t h0        = bf512_zero();
+  bf512_t h1        = bf512_zero();
+  for (unsigned int i = 0; i != ell;
+       ++i, running_s = bf512_mul(running_s, b_s), running_t = bf512_mul(running_t, b_t)) {
+    h0 = bf512_add(h0, bf512_mul(running_s, x[ell - 1 - i]));
+    h1 = bf512_add(h1, bf512_mul(running_t, x[ell - 1 - i]));
+  }
+
+  h0 = bf512_add(bf512_add(bf512_mul(bf512_load(r0), h0), bf512_mul(bf512_load(r1), h1)), *x1);
+  bf512_store(h, h0);
 }

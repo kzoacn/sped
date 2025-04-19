@@ -1,0 +1,23 @@
+# Building: FAEST_320F (faest_320f)
+ninja: no work to do.
+ninja: no work to do.
+# Testing: FAEST_320F (faest_320f)
+Sign/Verify test passed
+# Benching: FAEST_320F (faest_320f)
+FAEST_320F 28736 80 201
+17.2423 ms
+442.824 ms
+365.131 ms
+END
+# Building: FAEST_512F (faest_512f)
+[3/3] Linking target faest_512f/faest_512f_api_test
+[1/1] Linking target faest_512f/faest_512f_bench_c2
+lto-wrapper: warning: using serial compilation of 2 LTRANS jobs
+# Testing: FAEST_512F (faest_512f)
+Sign/Verify test passed
+# Benching: FAEST_512F (faest_512f)
+FAEST_512F 77968 128 273
+37.022 ms
+1.589 s
+1.36881 s
+END

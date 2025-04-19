@@ -25,6 +25,10 @@ const char* faest_get_param_name(faest_paramid_t paramid) {
     return "FAEST_256S";
   case FAEST_256F:
     return "FAEST_256F";
+  case FAEST_320F:
+    return "FAEST_320F";
+  case FAEST_512F:
+    return "FAEST_512F";
   default:
     return "PARAMETER_SET_MAX_INDEX";
   }
@@ -75,6 +79,23 @@ const char* faest_get_param_name(faest_paramid_t paramid) {
         FAEST_256F_M, FAEST_256F_N, FAEST_256F_W, FAEST_256F_D       \
   }
 
+  #define FAEST_320F_PARAMS                                                                          \
+  {                                                                                                \
+    FAEST_320F_LAMBDA, FAEST_320F_Nwd,                \
+        FAEST_320F_L,  FAEST_320F_TAU, FAEST_320F_K0,              \
+        FAEST_320F_K1, FAEST_320F_T0, FAEST_320F_T1, FAEST_320F_SIG_SIZE, FAEST_320F_PK_SIZE,       \
+        FAEST_320F_M, FAEST_320F_N, FAEST_320F_W, FAEST_320F_D       \
+  }
+
+  #define FAEST_512F_PARAMS                                                                          \
+  {                                                                                                \
+    FAEST_512F_LAMBDA, FAEST_512F_Nwd,                \
+        FAEST_512F_L,  FAEST_512F_TAU, FAEST_512F_K0,              \
+        FAEST_512F_K1, FAEST_512F_T0, FAEST_512F_T1, FAEST_512F_SIG_SIZE, FAEST_512F_PK_SIZE,       \
+        FAEST_512F_M, FAEST_512F_N, FAEST_512F_W, FAEST_512F_D       \
+  }
+  
+
 #define FAEST_INVALID_PARAMS                                                                       \
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0 }
 
@@ -92,6 +113,10 @@ faest_paramset_t faest_get_paramset(faest_paramid_t paramid) {
     return (faest_paramset_t){FAEST_256S_PARAMS, FAEST_256S};
   case FAEST_256F:
     return (faest_paramset_t){FAEST_256F_PARAMS, FAEST_256F};
+  case FAEST_320F:
+    return (faest_paramset_t){FAEST_320F_PARAMS, FAEST_320F};
+  case FAEST_512F:
+    return (faest_paramset_t){FAEST_512F_PARAMS, FAEST_512F};
   default:
     return (faest_paramset_t){FAEST_INVALID_PARAMS, PARAMETER_SET_INVALID};
   }
