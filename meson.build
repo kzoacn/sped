@@ -252,7 +252,7 @@ endforeach
 
 # dependencies
 openssl = dependency('openssl', required: get_option('openssl'))
-boost_program_options = dependency('boost', required: get_option('benchmarks'), modules: ['program_options'])
+boost_program_options = dependency('boost', required: get_option('benchmarks'), modules: ['program_options'], method: 'cmake')
 valgrind = dependency('valgrind', required: get_option('valgrind'))
 if valgrind.found()
   valgrind_exec = find_program('valgrind', required: true)

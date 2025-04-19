@@ -426,6 +426,10 @@ uint8_t* aes_extend_witness(const uint8_t* key, const uint8_t* input, const faes
     }
   }
 
+  // free memory
+  free(compact_e);
+  free(e);
+
 
   return w_out;
 }
