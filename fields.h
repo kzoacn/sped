@@ -34,6 +34,16 @@ typedef struct {
   uint64_t values[4];
 } bf256_t;
 
+typedef struct {
+  uint64_t values[5];
+} bf320_t;
+
+typedef struct 
+{
+  uint64_t values[8];
+} bf512_t;
+
+
 // GF(2^8) implementation
 
 ATTR_PURE ATTR_ALWAYS_INLINE static inline bf8_t bf8_load(const uint8_t* src) {
@@ -288,6 +298,140 @@ ATTR_CONST bf256_t bf256_mul(bf256_t lhs, bf256_t rhs);
 //ATTR_CONST bf256_t bf256_mul_bit(bf256_t lhs, uint8_t rhs);
 ATTR_CONST bf256_t bf256_inv(bf256_t lhs);
 ATTR_PURE bf256_t bf256_sum_poly(const bf256_t* xs);
+
+
+// GF(2^320) implementation
+
+ATTR_PURE ATTR_ALWAYS_INLINE static inline bf320_t bf320_load(const uint8_t* src) {
+  bf320_t ret;
+#if defined(FAEST_IS_BIG_ENDIAN)
+  for (unsigned int i = 0; i != ARRAY_SIZE(ret.values); ++i, src += sizeof(uint64_t)) {
+    memcpy(&ret.values[i], src, sizeof(ret.values[i]));
+    ret.values[i] = le64toh(ret.values[i]);
+  }
+#else
+  memcpy(&ret, src, sizeof(ret));
+#endif
+  return ret;
+}
+
+ATTR_ALWAYS_INLINE static inline void bf320_store(uint8_t* dst, bf320_t src) {
+#if defined(FAEST_IS_BIG_ENDIAN)
+  for (unsigned int i = 0; i != ARRAY_SIZE(src.values); ++i, dst += sizeof(uint64_t)) {
+    uint64_t tmp = htole64(src.values[i]);
+    memcpy(dst, &tmp, sizeof(tmp));
+  }
+#else
+  memcpy(dst, &src, sizeof(src));
+#endif
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf320_t bf320_from_bf64(bf64_t src) {
+  bf320_t ret;
+  ret.values[0] = src;
+  ret.values[1] = ret.values[2] = ret.values[3] = 0;
+  return ret;
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf320_t bf320_from_bf8(bf8_t src) {
+  bf320_t ret;
+  ret.values[0] = src;
+  ret.values[1] = ret.values[2] = ret.values[3] = 0;
+  return ret;
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf320_t bf320_from_bit(uint8_t bit) {
+  return bf320_from_bf8(bit & 1);
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf320_t bf320_zero() {
+  bf320_t r = {0};
+  return r;
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf320_t bf320_one() {
+  bf320_t r = {{1, 0, 0, 0}};
+  return r;
+}
+ 
+ATTR_CONST static inline bf320_t bf320_add(bf320_t lhs, bf320_t rhs) {
+  for (unsigned int i = 0; i != ARRAY_SIZE(lhs.values); ++i) {
+    lhs.values[i] ^= rhs.values[i];
+  }
+  return lhs;
+}
+
+ATTR_CONST bf320_t bf320_mul(bf320_t lhs, bf320_t rhs);
+//ATTR_CONST bf320_t bf320_mul_bit(bf320_t lhs, uint8_t rhs);
+ATTR_CONST bf320_t bf320_inv(bf320_t lhs);
+ATTR_PURE bf320_t bf320_sum_poly(const bf320_t* xs);
+
+
+// GF(2^512) implementation
+
+ATTR_PURE ATTR_ALWAYS_INLINE static inline bf512_t bf512_load(const uint8_t* src) {
+  bf512_t ret;
+#if defined(FAEST_IS_BIG_ENDIAN)
+  for (unsigned int i = 0; i != ARRAY_SIZE(ret.values); ++i, src += sizeof(uint64_t)) {
+    memcpy(&ret.values[i], src, sizeof(ret.values[i]));
+    ret.values[i] = le64toh(ret.values[i]);
+  }
+#else
+  memcpy(&ret, src, sizeof(ret));
+#endif
+  return ret;
+}
+
+ATTR_ALWAYS_INLINE static inline void bf512_store(uint8_t* dst, bf512_t src) {
+#if defined(FAEST_IS_BIG_ENDIAN)
+  for (unsigned int i = 0; i != ARRAY_SIZE(src.values); ++i, dst += sizeof(uint64_t)) {
+    uint64_t tmp = htole64(src.values[i]);
+    memcpy(dst, &tmp, sizeof(tmp));
+  }
+#else
+  memcpy(dst, &src, sizeof(src));
+#endif
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf512_t bf512_from_bf64(bf64_t src) {
+  bf512_t ret;
+  ret.values[0] = src;
+  ret.values[1] = ret.values[2] = ret.values[3] = 0;
+  return ret;
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf512_t bf512_from_bf8(bf8_t src) {
+  bf512_t ret;
+  ret.values[0] = src;
+  ret.values[1] = ret.values[2] = ret.values[3] = 0;
+  return ret;
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf512_t bf512_from_bit(uint8_t bit) {
+  return bf512_from_bf8(bit & 1);
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf512_t bf512_zero() {
+  bf512_t r = {0};
+  return r;
+}
+
+ATTR_CONST ATTR_ALWAYS_INLINE static inline bf512_t bf512_one() {
+  bf512_t r = {{1, 0, 0, 0}};
+  return r;
+}
+ 
+ATTR_CONST static inline bf512_t bf512_add(bf512_t lhs, bf512_t rhs) {
+  for (unsigned int i = 0; i != ARRAY_SIZE(lhs.values); ++i) {
+    lhs.values[i] ^= rhs.values[i];
+  }
+  return lhs;
+}
+
+ATTR_CONST bf512_t bf512_mul(bf512_t lhs, bf512_t rhs);
+//ATTR_CONST bf512_t bf512_mul_bit(bf512_t lhs, uint8_t rhs);
+ATTR_CONST bf512_t bf512_inv(bf512_t lhs);
+ATTR_PURE bf512_t bf512_sum_poly(const bf512_t* xs);
 
 FAEST_END_C_DECL
 

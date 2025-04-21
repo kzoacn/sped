@@ -199,6 +199,47 @@ param_256f.set('D', 6)
 parameter_sets += param_256f
 
 
+param_320f = configuration_data()
+param_320f.set('PARAM', '320F')
+param_320f.set('PARAM_L', '320f')
+param_320f.set('LAMBDA', 320)
+param_320f.set('Nwd', 8)
+param_320f.set('L', 1880)
+param_320f.set('TAU', 40)
+param_320f.set('K0', 8)
+param_320f.set('K1', 8)
+param_320f.set('T0', 0)
+param_320f.set('T1', 40)
+param_320f.set('SIG_SIZE', 28736)
+param_320f.set('PK_SIZE', 201)
+param_320f.set('SK_SIZE', 80)
+param_320f.set('M', 3432)
+param_320f.set('N', 1288)
+param_320f.set('W', 429)
+param_320f.set('D', 8)
+parameter_sets += param_320f
+
+
+param_512f = configuration_data()
+param_512f.set('PARAM', '512F')
+param_512f.set('PARAM_L', '512f')
+param_512f.set('LAMBDA', 512)
+param_512f.set('Nwd', 8)
+param_512f.set('L', 3576)
+param_512f.set('TAU', 64)
+param_512f.set('K0', 8)
+param_512f.set('K1', 8)
+param_512f.set('T0', 0)
+param_512f.set('T1', 64)
+param_512f.set('SIG_SIZE', 77968)
+param_512f.set('PK_SIZE', 273)
+param_512f.set('SK_SIZE', 128)
+param_512f.set('M', 5568)
+param_512f.set('N', 1668)
+param_512f.set('W', 464)
+param_512f.set('D', 12)
+parameter_sets += param_512f
+
 
 # also make data from all parameter sets available "globally"
 parameter_data = configuration_data()
@@ -211,7 +252,7 @@ endforeach
 
 # dependencies
 openssl = dependency('openssl', required: get_option('openssl'))
-boost_program_options = dependency('boost', required: get_option('benchmarks'), modules: ['program_options'])
+boost_program_options = dependency('boost', required: get_option('benchmarks'), modules: ['program_options'], method: 'cmake')
 valgrind = dependency('valgrind', required: get_option('valgrind'))
 if valgrind.found()
   valgrind_exec = find_program('valgrind', required: true)

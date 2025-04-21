@@ -1,5 +1,5 @@
 {
-    "C_Cpp.default.compileCommands": "builddir/compile_commands.json",
+    "C_Cpp.default.compileCommands": "/home/rick/work/sped/builddir/compile_commands.json",
     "files.associations": {
         "instances.h": "c",
         "parameters.h": "c",
@@ -9,5 +9,6 @@
         "config.h": "c",
         "macros.h": "c",
         "array": "cpp"
-    }
+    },
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
 }

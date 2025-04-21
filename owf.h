@@ -23,6 +23,12 @@ bool faest_192f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
 bool faest_256s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
 bool faest_256f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
 
+bool faest_320s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
+bool faest_320f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
+
+bool faest_512s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
+bool faest_512f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output);
+
 FAEST_END_C_DECL
 
 #endif

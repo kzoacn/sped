@@ -14,8 +14,29 @@
 #include "time.h"
 
 bool owf(const uint8_t* key, const uint8_t* input, uint8_t* output, int lambda) {
-
-  const faest_paramset_t paramset =  faest_get_paramset(lambda == 128 ? FAEST_128S : (lambda == 192 ? FAEST_192S : FAEST_256S));
+  faest_paramset_t param_temp;
+  switch (lambda)
+  {
+  case 128:
+    param_temp = faest_get_paramset(FAEST_128F);
+    break;
+  case 192:
+    param_temp = faest_get_paramset(FAEST_192F);
+    break;
+  case 256:
+    param_temp = faest_get_paramset(FAEST_256F);
+    break;
+  case 320:
+    param_temp = faest_get_paramset(FAEST_320F);
+    break;
+  case 512:
+    param_temp = faest_get_paramset(FAEST_512F);
+    break;
+  default:
+    fprintf(stderr, "lambda = %d not supported.\n", lambda);
+    return false;
+  }
+  const faest_paramset_t paramset =  param_temp;
   const int n = paramset.faest_param.n;
   const int m = paramset.faest_param.m;
   const int w = paramset.faest_param.w;
@@ -71,4 +92,18 @@ bool faest_256s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
 }
 bool faest_256f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
   return owf(key, input, output, 256);
+}
+
+bool faest_320s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 320);
+}
+bool faest_320f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 320);
+}
+
+bool faest_512s_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 512);
+}
+bool faest_512f_owf(const uint8_t* key, const uint8_t* input, uint8_t* output){
+  return owf(key, input, output, 512);
 }

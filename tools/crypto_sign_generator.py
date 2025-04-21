@@ -5,7 +5,7 @@ from pathlib import Path
 def main():
     param_name = sys.argv[1]
     if param_name == "all":
-        for bits in (128, 192, 256):
+        for bits in (128, 192, 256, 320, 512):
             for t in ("s", "f"):
                 generate(f"{bits}{t}")
                 generate(f"em_{bits}{t}")
